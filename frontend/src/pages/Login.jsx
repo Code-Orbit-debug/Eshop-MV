@@ -11,7 +11,8 @@ const LoginPage = () => {
     if(isAuthenticated === true){
       navigate("/");
     }
-  }, []);
+  }, [])
+  
   return (
     <div>
         <Login />
