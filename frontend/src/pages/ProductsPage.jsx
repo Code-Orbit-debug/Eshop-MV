@@ -9,8 +9,8 @@ import styles from "../styles/styles";
 
 const ProductsPage = () => {
   const [searchParams] = useSearchParams();
-  const {allProducts,isLoading} = useSelector((state) => state.products);
   const categoryData = searchParams.get("category");
+  const {allProducts,isLoading} = useSelector((state) => state.products);
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -19,14 +19,14 @@ const ProductsPage = () => {
       setData(d);
     } else {
       const d =
-        allProducts && allProducts.filter((i) => i.category === categoryData);
+      allProducts && allProducts.filter((i) => i.category === categoryData);
       setData(d);
     }
     //    window.scrollTo(0,0);
   }, [allProducts]);
 
   return (
-    <>
+  <>
   {
     isLoading ? (
       <Loader />
