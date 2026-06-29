@@ -27,13 +27,11 @@ const Login = () => {
       .then((res) => {
         toast.success("Login Success!");
         navigate("/");
-        window.location.reload(true);
+        window.location.reload(true); 
       })
       .catch((err) => {
-  const message =
-    err?.response?.data?.message || "Something went wrong";
-  toast.error(message);
-});
+        toast.error(err.response.data.message);
+      });
   };
 
   return (
