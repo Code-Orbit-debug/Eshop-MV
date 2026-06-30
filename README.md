@@ -17,7 +17,7 @@ A full-featured marketplace where independent sellers run their own shops, buyer
 
 ## 📖 Overview
 
-**Eshop-MV** is a multi-vendor e-commerce marketplace where independent sellers can register their own shops, list products, run promotional events, and manage orders — while buyers shop across a single unified storefront with cart, wishlist, checkout, and order tracking.
+**Eshop-MV** is a multi-vendor e-commerce marketplace where independent sellers can register their own shops, list products, run promotional events, and manage orders while buyers shop across a single unified storefront with cart, wishlist, checkout, and order tracking.
 
 What sets it apart from a typical single seller store is the three-role architecture: **buyers**, **sellers**, and **admins** each get their own permissions, dashboards, and views over a shared product and order pipeline. The codebase is split into three independently deployable services a REST API, a React client, and a standalone real-time service mirroring how production e-commerce platforms are actually structured.
 
