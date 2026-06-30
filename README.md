@@ -53,7 +53,6 @@ What sets it apart from a typical single seller store is the three-role architec
 - Full visibility into users, shops, products, orders, and payouts
 - Seller and content moderation tools
 
----
 
 ## 🏗️ System Architecture
 
@@ -133,29 +132,249 @@ The project is split into **three independently deployable services**:
 
 ## 📁 Project Structure
 
+# Project Structure
+
 ```
-Eshop-MV/
-├── backend/
-│   ├── config/
-│   ├── controller/      → product, shop, order, user, payment, event, coupounCode, message, withdraw
-│   ├── db/               → Database.js (MongoDB connection)
-│   ├── middleware/       → auth, error handling, async error wrapper
-│   ├── model/            → Mongoose schemas
-│   ├── utils/            → JWT helpers, error handler, email service
+├── backend
+│   ├── config
+│   ├── controller
+│   │   ├── conversation.js
+│   │   ├── coupounCode.js
+│   │   ├── event.js
+│   │   ├── message.js
+│   │   ├── order.js
+│   │   ├── payment.js
+│   │   ├── product.js
+│   │   ├── shop.js
+│   │   ├── user.js
+│   │   └── withdraw.js
+│   ├── db
+│   │   └── Database.js
+│   ├── middleware
+│   │   ├── auth.js
+│   │   ├── catchAsyncErrors.js
+│   │   └── error.js
+│   ├── model
+│   │   ├── conversation.js
+│   │   ├── coupounCode.js
+│   │   ├── event.js
+│   │   ├── messages.js
+│   │   ├── order.js
+│   │   ├── product.js
+│   │   ├── shop.js
+│   │   ├── user.js
+│   │   └── withdraw.js
+│   ├── seed
+│   ├── uploads
+│   ├── utils
+│   │   ├── ErrorHandler.js
+│   │   ├── jwtToken.js
+│   │   ├── sendMail.js
+│   │   └── shopToken.js
 │   ├── app.js
+│   ├── multer.js
+│   ├── package-lock.json
+│   ├── package.json
 │   └── server.js
-│
-├── frontend/
-│   ├── src/
-│   │   ├── components/   → Admin, Shop, Cart, Checkout, Events, Products, Layout...
-│   │   ├── pages/        → route-level pages (Home, Products, Shop dashboard, Admin dashboard...)
-│   │   ├── redux/        → actions & reducers (cart, order, product, seller, user, wishlist, event)
-│   │   ├── routes/       → role-based protected routes
-│   │   └── server.js     → API base URL config
-│   └── tailwind.config.js
-│
-└── socket/
-    └── index.js          → standalone Socket.IO server for chat & notifications
+├── frontend
+│   ├── build
+│   │   ├── static
+│   │   │   ├── css
+│   │   │   │   ├── main.b392feb7.css
+│   │   │   │   └── main.b392feb7.css.map
+│   │   │   └── js
+│   │   │       ├── 453.03346f77.chunk.js
+│   │   │       ├── 453.03346f77.chunk.js.map
+│   │   │       ├── main.5cef72e3.js
+│   │   │       ├── main.5cef72e3.js.LICENSE.txt
+│   │   │       └── main.5cef72e3.js.map
+│   │   ├── asset-manifest.json
+│   │   ├── favicon.ico
+│   │   ├── index.html
+│   │   ├── logo192.png
+│   │   ├── logo512.png
+│   │   ├── manifest.json
+│   │   └── robots.txt
+│   ├── public
+│   │   ├── favicon.ico
+│   │   ├── index.html
+│   │   ├── logo192.png
+│   │   ├── logo512.png
+│   │   ├── manifest.json
+│   │   └── robots.txt
+│   ├── src
+│   │   ├── Assests
+│   │   │   └── animations
+│   │   │       ├── 107043-success.json
+│   │   │       └── 24151-ecommerce-animation.json
+│   │   ├── Assets
+│   │   ├── components
+│   │   │   ├── Admin
+│   │   │   │   ├── Layout
+│   │   │   │   │   └── AdminSideBar.jsx
+│   │   │   │   ├── AdminDashboardMain.jsx
+│   │   │   │   ├── AllEvents.jsx
+│   │   │   │   ├── AllProducts.jsx
+│   │   │   │   ├── AllSellers.jsx
+│   │   │   │   ├── AllUsers.jsx
+│   │   │   │   └── AllWithdraw.jsx
+│   │   │   ├── Cart
+│   │   │   │   └── Cart.jsx
+│   │   │   ├── Checkout
+│   │   │   │   ├── Checkout.jsx
+│   │   │   │   └── CheckoutSteps.jsx
+│   │   │   ├── Events
+│   │   │   │   ├── CountDown.jsx
+│   │   │   │   ├── EventCard.jsx
+│   │   │   │   └── Events.jsx
+│   │   │   ├── Layout
+│   │   │   │   ├── AdminHeader.jsx
+│   │   │   │   ├── DropDown.jsx
+│   │   │   │   ├── Footer.jsx
+│   │   │   │   ├── Header.jsx
+│   │   │   │   ├── Loader.jsx
+│   │   │   │   └── Navbar.jsx
+│   │   │   ├── Login
+│   │   │   │   └── Login.jsx
+│   │   │   ├── Payment
+│   │   │   │   └── Payment.jsx
+│   │   │   ├── Products
+│   │   │   │   ├── ProductDetails.jsx
+│   │   │   │   ├── Ratings.jsx
+│   │   │   │   └── SuggestedProduct.jsx
+│   │   │   ├── Profile
+│   │   │   │   ├── ProfileContent.jsx
+│   │   │   │   ├── ProfileSidebar.jsx
+│   │   │   │   └── TrackOrder.jsx
+│   │   │   ├── Route
+│   │   │   │   ├── BestDeals
+│   │   │   │   │   └── BestDeals.jsx
+│   │   │   │   ├── Categories
+│   │   │   │   │   └── Categories.jsx
+│   │   │   │   ├── FeaturedProduct
+│   │   │   │   │   └── FeaturedProduct.jsx
+│   │   │   │   ├── Hero
+│   │   │   │   │   └── Hero.jsx
+│   │   │   │   ├── ProductCard
+│   │   │   │   │   └── ProductCard.jsx
+│   │   │   │   ├── ProductDetailsCard
+│   │   │   │   │   └── ProductDetailsCard.jsx
+│   │   │   │   └── Sponsored.jsx
+│   │   │   ├── Shop
+│   │   │   │   ├── Layout
+│   │   │   │   │   ├── DashboardHeader.jsx
+│   │   │   │   │   └── DashboardSideBar.jsx
+│   │   │   │   ├── AllCoupons.jsx
+│   │   │   │   ├── AllEvents.jsx
+│   │   │   │   ├── AllOrders.jsx
+│   │   │   │   ├── AllProducts.jsx
+│   │   │   │   ├── AllRefundOrders.jsx
+│   │   │   │   ├── CreateEvent.jsx
+│   │   │   │   ├── CreateProduct.jsx
+│   │   │   │   ├── DashboardHero.jsx
+│   │   │   │   ├── DashboardMessages.jsx
+│   │   │   │   ├── OrderDetails.jsx
+│   │   │   │   ├── ShopCreate.jsx
+│   │   │   │   ├── ShopInfo.jsx
+│   │   │   │   ├── ShopLogin.jsx
+│   │   │   │   ├── ShopProfileData.jsx
+│   │   │   │   ├── ShopSettings.jsx
+│   │   │   │   └── WithdrawMoney.jsx
+│   │   │   ├── Signup
+│   │   │   │   └── Signup.jsx
+│   │   │   ├── Wishlist
+│   │   │   │   └── Wishlist.jsx
+│   │   │   └── UserOrderDetails.jsx
+│   │   ├── pages
+│   │   │   ├── Shop
+│   │   │   │   ├── ShopAllCoupouns.jsx
+│   │   │   │   ├── ShopAllEvents.jsx
+│   │   │   │   ├── ShopAllOrders.jsx
+│   │   │   │   ├── ShopAllProducts.jsx
+│   │   │   │   ├── ShopAllRefunds.jsx
+│   │   │   │   ├── ShopCreateEvents.jsx
+│   │   │   │   ├── ShopCreateProduct.jsx
+│   │   │   │   ├── ShopDashboardPage.jsx
+│   │   │   │   ├── ShopHomePage.jsx
+│   │   │   │   ├── ShopInboxPage.jsx
+│   │   │   │   ├── ShopOrderDetails.jsx
+│   │   │   │   ├── ShopPreviewPage.jsx
+│   │   │   │   ├── ShopSettingsPage.jsx
+│   │   │   │   └── ShopWithDrawMoneyPage.jsx
+│   │   │   ├── ActivationPage.jsx
+│   │   │   ├── AdminDashboardEvents.jsx
+│   │   │   ├── AdminDashboardOrders.jsx
+│   │   │   ├── AdminDashboardPage.jsx
+│   │   │   ├── AdminDashboardProducts.jsx
+│   │   │   ├── AdminDashboardSellers.jsx
+│   │   │   ├── AdminDashboardUsers.jsx
+│   │   │   ├── AdminDashboardWithdraw.jsx
+│   │   │   ├── BestSellingPage.jsx
+│   │   │   ├── CheckoutPage.jsx
+│   │   │   ├── EventsPage.jsx
+│   │   │   ├── FAQPage.jsx
+│   │   │   ├── HomePage.jsx
+│   │   │   ├── Login.jsx
+│   │   │   ├── OrderDetailsPage.jsx
+│   │   │   ├── OrderSuccessPage.jsx
+│   │   │   ├── PaymentPage.jsx
+│   │   │   ├── ProductDetailsPage.jsx
+│   │   │   ├── ProductsPage.jsx
+│   │   │   ├── ProfilePage.jsx
+│   │   │   ├── SellerActivationPage.jsx
+│   │   │   ├── ShopCreate.jsx
+│   │   │   ├── ShopLoginPage.jsx
+│   │   │   ├── SignupPage.jsx
+│   │   │   ├── TrackOrderPage.jsx
+│   │   │   └── UserInbox.jsx
+│   │   ├── redux
+│   │   │   ├── actions
+│   │   │   │   ├── cart.js
+│   │   │   │   ├── event.js
+│   │   │   │   ├── order.js
+│   │   │   │   ├── product.js
+│   │   │   │   ├── sellers.js
+│   │   │   │   ├── user.js
+│   │   │   │   └── wishlist.js
+│   │   │   ├── reducers
+│   │   │   │   ├── cart.js
+│   │   │   │   ├── event.js
+│   │   │   │   ├── order.js
+│   │   │   │   ├── product.js
+│   │   │   │   ├── seller.js
+│   │   │   │   ├── user.js
+│   │   │   │   └── wishlist.js
+│   │   │   └── store.js
+│   │   ├── routes
+│   │   │   ├── AdminRoutes.js
+│   │   │   ├── ProtectedAdminRoute.js
+│   │   │   ├── ProtectedRoute.js
+│   │   │   ├── Routes.js
+│   │   │   ├── SellerProtectedRoute.js
+│   │   │   └── ShopRoutes.js
+│   │   ├── static
+│   │   │   └── data.js
+│   │   ├── styles
+│   │   │   └── styles.js
+│   │   ├── App.css
+│   │   ├── App.js
+│   │   ├── App.test.js
+│   │   ├── index.js
+│   │   ├── logo.svg
+│   │   ├── reportWebVitals.js
+│   │   ├── server.js
+│   │   ├── setupTests.js
+│   │   └── ShopRoutes.js
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── postcss.config.js
+│   ├── README.md
+│   ├── tailwind.config.js
+│   └── yarn.lock
+└── socket
+    ├── index.js
+    ├── package-lock.json
+    └── package.json
 ```
 
 
@@ -206,7 +425,7 @@ STRIPE_SECRET_KEY=your_stripe_secret_key
 ```
 
 ```bash
-npm start
+npm run dev
 ```
 
 ### 3. Frontend setup
@@ -251,7 +470,6 @@ The app should now be running locally:
 
 > **Note:** Environment variables do **not** carry over from local development to hosted platforms they must be added manually in each service's dashboard.
 
----
 
 ## 🗺️ Application Flow
 
