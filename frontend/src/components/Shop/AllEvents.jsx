@@ -1,26 +1,31 @@
-import { Button } from "@material-ui/core";
-import { DataGrid } from "@material-ui/data-grid";
 import React, { useEffect } from "react";
-import { AiOutlineDelete, AiOutlineEye } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { deleteEvent, getAllEventsShop } from "../../redux/actions/event";
 import Loader from "../Layout/Loader";
-
+import Button from "@mui/material/Button";
+import { DataGrid } from "@mui/x-data-grid";
+import { Link } from "react-router-dom";
+import { AiOutlineDelete, AiOutlineEye } from "react-icons/ai";
+import { deleteEvent, getAllEventsShop } from "../../redux/actions/event";
+import { toast } from "react-toastify";
 const AllEvents = () => {
   const { events, isLoading } = useSelector((state) => state.events);
   const { seller } = useSelector((state) => state.seller);
-
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getAllEventsShop(seller._id));
-  }, [dispatch, seller._id]);
+  }, []);
 
   const handleDelete = (id) => {
-    dispatch(deleteEvent(id));
-    window.location.reload();
-  }
+    dispatch(deleteEvent(id))
+      .then(() => {
+        toast.success("Event deleted successfully!");
+        dispatch(getAllEventsShop(seller._id));
+      })
+      .catch((err) => {
+        toast.error(err);
+      });
+  };
 
   const columns = [
     { field: "id", headerName: "Product Id", minWidth: 150, flex: 0.7 },
@@ -59,11 +64,9 @@ const AllEvents = () => {
       type: "number",
       sortable: false,
       renderCell: (params) => {
-        const d = params.row.name;
-        const product_name = d.replace(/\s+/g, "-");
         return (
           <>
-            <Link to={`/product/${product_name}`}>
+            <Link to={`/product/${params.id}?isEvent=true`}>
               <Button>
                 <AiOutlineEye size={20} />
               </Button>
@@ -82,9 +85,7 @@ const AllEvents = () => {
       renderCell: (params) => {
         return (
           <>
-            <Button
-            onClick={() => handleDelete(params.id)}
-            >
+            <Button onClick={() => handleDelete(params.id)}>
               <AiOutlineDelete size={20} />
             </Button>
           </>
@@ -96,22 +97,21 @@ const AllEvents = () => {
   const row = [];
 
   events &&
-  events.forEach((item) => {
+    events.forEach((item) => {
       row.push({
         id: item._id,
         name: item.name,
         price: "US$ " + item.discountPrice,
         Stock: item.stock,
-        sold: item.sold_out,
+        sold: item?.sold_out,
       });
     });
-
   return (
-    <>
+    <div>
       {isLoading ? (
         <Loader />
       ) : (
-        <div className="w-full mx-8 pt-1 mt-10 bg-white">
+        <div className="w-full ">
           <DataGrid
             rows={row}
             columns={columns}
@@ -121,8 +121,7 @@ const AllEvents = () => {
           />
         </div>
       )}
-    </>
+    </div>
   );
 };
-
 export default AllEvents;

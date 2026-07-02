@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { AiOutlinePlusCircle } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { categoriesData } from "../../static/data";
+import { AiOutlinePlusCircle } from "react-icons/ai";
 import { toast } from "react-toastify";
-import { createevent } from "../../redux/actions/event";
-
+import { createEvent, getAllEventsShop } from "../../redux/actions/event";
 const CreateEvent = () => {
-  const { seller } = useSelector((state) => state.seller);
   const { success, error } = useSelector((state) => state.events);
+  const { seller } = useSelector((state) => state.seller);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const [images, setImages] = useState([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -21,26 +19,26 @@ const CreateEvent = () => {
   const [discountPrice, setDiscountPrice] = useState();
   const [stock, setStock] = useState();
   const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-
+  const [endDate, setendDate] = useState(null);
+  // Start Date Change Handler
   const handleStartDateChange = (e) => {
     const startDate = new Date(e.target.value);
     const minEndDate = new Date(startDate.getTime() + 3 * 24 * 60 * 60 * 1000);
     setStartDate(startDate);
-    setEndDate(null);
-    document.getElementById("end-date").min = minEndDate.toISOString.slice(
+    setendDate(null);
+    document.getElementById("end-date").min = minEndDate.toISOString().slice(
       0,
       10
     );
   };
-
+  //Handle End Date Change
   const handleEndDateChange = (e) => {
     const endDate = new Date(e.target.value);
-    setEndDate(endDate);
+    setendDate(endDate);
   };
 
   const today = new Date().toISOString().slice(0, 10);
-
+  //this is simply a ternary operator
   const minEndDate = startDate
     ? new Date(startDate.getTime() + 3 * 24 * 60 * 60 * 1000)
         .toISOString()
@@ -50,22 +48,31 @@ const CreateEvent = () => {
   useEffect(() => {
     if (error) {
       toast.error(error);
+      dispatch({ type: "clearErrors" });
     }
     if (success) {
-      toast.success("Event created successfully!");
-      navigate("/dashboard-events");
-      window.location.reload();
+      toast.success("Event Product Created Successfully!");
+      dispatch(getAllEventsShop(seller._id));
+      setImages([]);
+      setName("");
+      setDescription("");
+      setCategory("");
+      setTags("");
+      setOriginalPrice("");
+      setDiscountPrice("");
+      setStock("");
+      setStartDate("");
+      setendDate("");
+      navigate("/dashboard");
+     
     }
-  }, [dispatch, error, success, navigate]);
-
+  }, [dispatch, error, success,navigate]);
+  // Image Change Handler
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-
     setImages([]);
-
     files.forEach((file) => {
       const reader = new FileReader();
-
       reader.onload = () => {
         if (reader.readyState === 2) {
           setImages((old) => [...old, reader.result]);
@@ -74,12 +81,10 @@ const CreateEvent = () => {
       reader.readAsDataURL(file);
     });
   };
-
-  const handleSubmit = (e) => {
+  // Form Submission Form
+  const HandleSubmit = (e) => {
     e.preventDefault();
-
     const newForm = new FormData();
-
     images.forEach((image) => {
       newForm.append("images", image);
     });
@@ -96,14 +101,14 @@ const CreateEvent = () => {
       start_Date: startDate?.toISOString(),
       Finish_Date: endDate?.toISOString(),
     };
-    dispatch(createevent(data));
+    dispatch(createEvent(data));
+ 
   };
-
   return (
     <div className="w-[90%] 800px:w-[50%] bg-white  shadow h-[80vh] rounded-[4px] p-3 overflow-y-scroll">
-      <h5 className="text-[30px] font-Poppins text-center">Create Event</h5>
-      {/* create event form */}
-      <form onSubmit={handleSubmit}>
+      <h5 className="text-[30px] font-Poppins text-center">Create Event </h5>
+      {/* Event  Create Form  */}
+      <form onSubmit={HandleSubmit}>
         <br />
         <div>
           <label className="pb-2">
@@ -113,9 +118,9 @@ const CreateEvent = () => {
             type="text"
             name="name"
             value={name}
-            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm capitalize"
             onChange={(e) => setName(e.target.value)}
-            placeholder="Enter your event product name..."
+            placeholder="Enter Your Event Product Name "
           />
         </div>
         <br />
@@ -130,9 +135,9 @@ const CreateEvent = () => {
             type="text"
             name="description"
             value={description}
-            className="mt-2 appearance-none block w-full pt-2 px-3 border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            className="mt-2 appearance-none block w-full pt-2 px-3 border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm capitalize"
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Enter your event product description..."
+            placeholder="Enter your Event Product description"
           ></textarea>
         </div>
         <br />
@@ -141,7 +146,8 @@ const CreateEvent = () => {
             Category <span className="text-red-500">*</span>
           </label>
           <select
-            className="w-full mt-2 border h-[35px] rounded-[5px]"
+            className="w-full mt-2 border h-[35px] rounded-[5px] capitalize
+              "
             value={category}
             onChange={(e) => setCategory(e.target.value)}
           >
@@ -161,9 +167,9 @@ const CreateEvent = () => {
             type="text"
             name="tags"
             value={tags}
-            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm capitalize"
             onChange={(e) => setTags(e.target.value)}
-            placeholder="Enter your event product tags..."
+            placeholder="Enter Your Event Product Tags"
           />
         </div>
         <br />
@@ -173,9 +179,9 @@ const CreateEvent = () => {
             type="number"
             name="price"
             value={originalPrice}
-            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm capitalize"
             onChange={(e) => setOriginalPrice(e.target.value)}
-            placeholder="Enter your event product price..."
+            placeholder="Enter your Event Product price"
           />
         </div>
         <br />
@@ -189,13 +195,13 @@ const CreateEvent = () => {
             value={discountPrice}
             className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             onChange={(e) => setDiscountPrice(e.target.value)}
-            placeholder="Enter your event product price with discount..."
+            placeholder="Enter your Event Product price with discount..."
           />
         </div>
         <br />
         <div>
           <label className="pb-2">
-            Product Stock <span className="text-red-500">*</span>
+            Event Product Stock <span className="text-red-500">*</span>
           </label>
           <input
             type="number"
@@ -203,39 +209,39 @@ const CreateEvent = () => {
             value={stock}
             className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             onChange={(e) => setStock(e.target.value)}
-            placeholder="Enter your event product stock..."
+            placeholder="Enter Your Event Product Stock..."
           />
         </div>
         <br />
         <div>
           <label className="pb-2">
-            Event Start Date <span className="text-red-500">*</span>
+            Event StartDate <span className="text-red-500">*</span>
           </label>
           <input
             type="date"
-            name="price"
             id="start-date"
+            name="price"
             value={startDate ? startDate.toISOString().slice(0, 10) : ""}
             className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             onChange={handleStartDateChange}
             min={today}
-            placeholder="Enter your event product stock..."
+            placeholder="Enter your product stock..."
           />
         </div>
         <br />
         <div>
           <label className="pb-2">
-            Event End Date <span className="text-red-500">*</span>
+            Event EndDate <span className="text-red-500">*</span>
           </label>
           <input
             type="date"
+            id="end-date"
             name="price"
-            id="start-date"
             value={endDate ? endDate.toISOString().slice(0, 10) : ""}
             className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             onChange={handleEndDateChange}
             min={minEndDate}
-            placeholder="Enter your event product stock..."
+            placeholder="Enter your product stock..."
           />
         </div>
         <br />
@@ -270,7 +276,7 @@ const CreateEvent = () => {
             <input
               type="submit"
               value="Create"
-              className="mt-2 cursor-pointer appearance-none text-center block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="mt-2 cursor-pointer appearance-none text-center block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none  hover:opacity-85 focus:ring-blue-500 bg-slate-800 focus:border-blue-500 sm:text-sm capitalize text-[#fff] "
             />
           </div>
         </div>
@@ -278,5 +284,4 @@ const CreateEvent = () => {
     </div>
   );
 };
-
 export default CreateEvent;
