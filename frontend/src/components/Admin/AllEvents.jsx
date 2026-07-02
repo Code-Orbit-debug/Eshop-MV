@@ -1,17 +1,20 @@
-import { Button } from "@material-ui/core";
-import { DataGrid } from "@material-ui/data-grid";
-import axios from "axios";
 import React, { useEffect, useState } from "react";
-import {  AiOutlineEye } from "react-icons/ai";
+import Button from "@mui/material/Button";
+import { DataGrid } from "@mui/x-data-grid";
 import { Link } from "react-router-dom";
+import { AiOutlineEye } from "react-icons/ai";
+import axios from "axios";
 import { server } from "../../server";
-
+import { toast } from "react-toastify";
 const AllEvents = () => {
   const [events, setEvents] = useState([]);
   useEffect(() => {
-   axios.get(`${server}/event/admin-all-events`, {withCredentials: true}).then((res) =>{
-    setEvents(res.data.events);
-   })
+    axios
+      .get(`${server}/event/admin-all-events`, { withCredentials: true })
+      .then((res) => setEvents(res.data.events))
+      .catch((error) => {
+        toast.error(error.response.data.message);
+      });
   }, []);
 
   const columns = [
@@ -44,10 +47,10 @@ const AllEvents = () => {
       flex: 0.6,
     },
     {
-      field: "Preview",
+      field: " Preview",
       flex: 0.8,
       minWidth: 100,
-      headerName: "",
+      headerName: "Preview",
       type: "number",
       sortable: false,
       renderCell: (params) => {
@@ -63,9 +66,7 @@ const AllEvents = () => {
       },
     },
   ];
-
   const row = [];
-
   events &&
     events.forEach((item) => {
       row.push({
@@ -73,10 +74,9 @@ const AllEvents = () => {
         name: item.name,
         price: "US$ " + item.discountPrice,
         Stock: item.stock,
-        sold: item.sold_out,
+        sold: item?.sold_out,
       });
     });
-
   return (
     <div className="w-full mx-8 pt-1 mt-10 bg-white">
       <DataGrid
@@ -89,5 +89,4 @@ const AllEvents = () => {
     </div>
   );
 };
-
 export default AllEvents;

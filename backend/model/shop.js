@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
+const withdraw = require("./withdraw");
 const shopSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -9,38 +9,34 @@ const shopSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: [true, "Please enter your shop email address"],
+    required: [true, "Please enter your shop email!"],
+    unique: true,
+    trim: true,
+    lowercase: true,
   },
   password: {
     type: String,
     required: [true, "Please enter your password"],
-    minLength: [6, "Password should be greater than 6 characters"],
+    minLength: [4, "Password should be greater than 4 characters"],
     select: false,
+  },
+  phoneNumber: {
+    type: Number,
+    trim: true,
+    required: true,
   },
   description: {
     type: String,
   },
-  address: {
-    type: String,
-    required: true,
-  },
-  phoneNumber: {
-    type: Number,
-    required: true,
-  },
+  address: [
+    {
+      type: String,
+      reuired: true,
+    },
+  ],
   role: {
     type: String,
     default: "Seller",
-  },
-  avatar: {
-    public_id: {
-      type: String,
-      required: true,
-    },
-    url: {
-      type: String,
-      required: true,
-    },
   },
   zipCode: {
     type: Number,
@@ -72,30 +68,41 @@ const shopSchema = new mongoose.Schema({
       },
     },
   ],
+  avatar: {
+    public_id: {
+      type: String,
+      required: true,
+    },
+    url: {
+      type: String,
+      required: true,
+    },
+  },
   createdAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
   resetPasswordToken: String,
   resetPasswordTime: Date,
 });
 
-// Hash password
+// Hash password before saving to database
 shopSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
-    next();
+    return next();
   }
+
   this.password = await bcrypt.hash(this.password, 10);
 });
 
-// jwt token
+// Generate JWT token for authentication
 shopSchema.methods.getJwtToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY, {
     expiresIn: process.env.JWT_EXPIRES,
   });
 };
 
-// comapre password
+// Compare entered password with stored hashed password
 shopSchema.methods.comparePassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };

@@ -1,17 +1,17 @@
 const Shop = require("../model/shop");
 const ErrorHandler = require("../utils/ErrorHandler");
-const catchAsyncErrors = require("../middleware/catchAsyncErrors");
+const catchAsyncError = require("../middleware/catchAsyncErrors");
 const express = require("express");
-const { isSeller, isAuthenticated, isAdmin } = require("../middleware/auth");
+const { isSeller, isAthuenticated, isAdmin } = require("../middleware/auth");
 const Withdraw = require("../model/withdraw");
 const sendMail = require("../utils/sendMail");
-const router = express.Router();
 
-// create withdraw request --- only for seller
+const router = express.Router();
+//craete a withdraw request only for sellers
 router.post(
   "/create-withdraw-request",
   isSeller,
-  catchAsyncErrors(async (req, res, next) => {
+  catchAsyncError(async (req, res, next) => {
     try {
       const { amount } = req.body;
 
@@ -50,17 +50,14 @@ router.post(
     }
   })
 );
-
-// get all withdraws --- admnin
-
+//get all withdraws ----->Admin
 router.get(
-  "/get-all-withdraw-request",
-  isAuthenticated,
+  `/get-all-withdraw-request`,
+  isAthuenticated,
   isAdmin("Admin"),
-  catchAsyncErrors(async (req, res, next) => {
+  catchAsyncError(async (req, res, next) => {
     try {
       const withdraws = await Withdraw.find().sort({ createdAt: -1 });
-
       res.status(201).json({
         success: true,
         withdraws,
@@ -70,13 +67,12 @@ router.get(
     }
   })
 );
-
-// update withdraw request ---- admin
+// update withdraw request: ---- admin
 router.put(
   "/update-withdraw-request/:id",
-  isAuthenticated,
+  isAthuenticated,
   isAdmin("Admin"),
-  catchAsyncErrors(async (req, res, next) => {
+  catchAsyncError(async (req, res, next) => {
     try {
       const { sellerId } = req.body;
 

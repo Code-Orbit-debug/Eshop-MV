@@ -1,25 +1,31 @@
 const express = require("express");
-const User = require("../model/user");
-const router = express.Router();
-const cloudinary = require("cloudinary");
+const path = require("path");
 const ErrorHandler = require("../utils/ErrorHandler");
-const catchAsyncErrors = require("../middleware/catchAsyncErrors");
+const { upload } = require("../multer");
+const User = require("../model/user");
+const catchAsyncError = require("../middleware/catchAsyncErrors");
+const fs = require("fs");
 const jwt = require("jsonwebtoken");
-const sendMail = require("../utils/sendMail");
 const sendToken = require("../utils/jwtToken");
-const { isAuthenticated, isAdmin } = require("../middleware/auth");
-
-// create user
+const sendMail = require("../utils/sendMail");
+const { isAthuenticated, isAdmin } = require("../middleware/auth");
+const router = express.Router();
+const cloudinary = require("cloudinary").v2;
+//craete_user Route
 router.post("/create-user", async (req, res, next) => {
   try {
     const { name, email, password, avatar } = req.body;
+
+    if (!name || !email || !password || !avatar) {
+      return next(new ErrorHandler("All fields are required", 400));
+    }
     const userEmail = await User.findOne({ email });
 
     if (userEmail) {
       return next(new ErrorHandler("User already exists", 400));
     }
 
-    const myCloud = await cloudinary.v2.uploader.upload(avatar, {
+    const myCloud = await cloudinary.uploader.upload(avatar, {
       folder: "avatars",
     });
 
@@ -35,113 +41,95 @@ router.post("/create-user", async (req, res, next) => {
 
     const activationToken = createActivationToken(user);
 
-    const activationUrl = `https://eshop-tutorial-pyri.vercel.app/activation/${activationToken}`;
-
+    const activationUrl = `https://eshop-mv.vercel.app/activation/${activationToken}`;
     try {
       await sendMail({
         email: user.email,
-        subject: "Activate your account",
-        message: `Hello ${user.name}, please click on the link to activate your account: ${activationUrl}`,
+        subject: "Activate Your Account!",
+        message: `Hello!\n Dear ${user.name}\n Please click on the link below to activate your account \n${activationUrl}`,
       });
       res.status(201).json({
         success: true,
-        message: `please check your email:- ${user.email} to activate your account!`,
+        message: `Please check your email:-${user.email} to activate your account!`,
       });
     } catch (error) {
-      return next(new ErrorHandler(error.message, 500));
+      next(new ErrorHandler(error.message, 500));
     }
   } catch (error) {
-    return next(new ErrorHandler(error.message, 400));
+    next(new ErrorHandler(error.message, 400));
   }
 });
-
-// create activation token
+//create activation Token (Function)
 const createActivationToken = (user) => {
   return jwt.sign(user, process.env.ACTIVATION_SECRET, {
-    expiresIn: "5m",
+    expiresIn: process.env.JWT_EXPIRES,
   });
 };
-
-// activate user
+//activate user Route
 router.post(
   "/activation",
-  catchAsyncErrors(async (req, res, next) => {
+  catchAsyncError(async (req, res, next) => {
     try {
       const { activation_token } = req.body;
-
       const newUser = jwt.verify(
         activation_token,
         process.env.ACTIVATION_SECRET
       );
-
       if (!newUser) {
-        return next(new ErrorHandler("Invalid token", 400));
+        next(new ErrorHandler("Invalid Token", 400));
       }
       const { name, email, password, avatar } = newUser;
-
       let user = await User.findOne({ email });
-
       if (user) {
         return next(new ErrorHandler("User already exists", 400));
       }
+
       user = await User.create({
         name,
         email,
-        avatar,
         password,
+        avatar,
       });
-
       sendToken(user, 201, res);
     } catch (error) {
-      return next(new ErrorHandler(error.message, 500));
+      next(new ErrorHandler(error.message, 500));
     }
   })
 );
-
-// login user
+//login_user Route
 router.post(
   "/login-user",
-  catchAsyncErrors(async (req, res, next) => {
+  catchAsyncError(async (req, res, next) => {
     try {
-      const { email, password } = req.body;
-
-      if (!email || !password) {
-        return next(new ErrorHandler("Please provide the all fields!", 400));
-      }
-
+      let { email, password } = req.body;
+      if (!email || !password)
+        return next(new ErrorHandler("All Fileds are required!", 500));
       const user = await User.findOne({ email }).select("+password");
-
       if (!user) {
-        return next(new ErrorHandler("User doesn't exists!", 400));
+        return next(new ErrorHandler("User Does't Exist!", 400));
       }
-
-      const isPasswordValid = await user.comparePassword(password);
-
-      if (!isPasswordValid) {
+      const ValidPassword = await user.comparePassword(password);
+      if (!ValidPassword) {
         return next(
-          new ErrorHandler("Please provide the correct information", 400)
+          new ErrorHandler("Please,Provide the correct information!", 400)
         );
       }
-
       sendToken(user, 201, res);
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
   })
 );
-
-// load user
+//load User Route
 router.get(
-  "/getuser",
-  isAuthenticated,
-  catchAsyncErrors(async (req, res, next) => {
+  "/get-user",
+  isAthuenticated,
+  catchAsyncError(async (req, res, next) => {
     try {
-      const user = await User.findById(req.user.id);
-
+      const user = await User.findById(req.user._id);
       if (!user) {
-        return next(new ErrorHandler("User doesn't exists", 400));
+        return next(new ErrorHandler("User does'nt exist!", 400));
       }
-
       res.status(200).json({
         success: true,
         user,
@@ -151,56 +139,48 @@ router.get(
     }
   })
 );
-
-// log out user
+// Logout User
 router.get(
   "/logout",
-  catchAsyncErrors(async (req, res, next) => {
+  isAthuenticated,
+  catchAsyncError(async (reeq, res, next) => {
     try {
-      res.cookie("token", null, {
+      res.cookie("token", "", {
         expires: new Date(Date.now()),
         httpOnly: true,
-        sameSite: "none",
-        secure: true,
       });
       res.status(201).json({
         success: true,
-        message: "Log out successful!",
+        message: "Logout Successfully!",
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
   })
 );
-
-// update user info
+//update User InFo
 router.put(
   "/update-user-info",
-  isAuthenticated,
-  catchAsyncErrors(async (req, res, next) => {
+  isAthuenticated,
+  catchAsyncError(async (req, res, next) => {
     try {
-      const { email, password, phoneNumber, name } = req.body;
-
+      const { name, email, password, phoneNumber } = req.body;
       const user = await User.findOne({ email }).select("+password");
-
       if (!user) {
-        return next(new ErrorHandler("User not found", 400));
+        return next(new ErrorHandler(error.message, 400));
       }
 
-      const isPasswordValid = await user.comparePassword(password);
-
-      if (!isPasswordValid) {
+      const ValidPassword = await user.comparePassword(password);
+      if (!ValidPassword) {
         return next(
-          new ErrorHandler("Please provide the correct information", 400)
+          new ErrorHandler("Please,Provide the correct information!", 400)
         );
       }
-
       user.name = name;
       user.email = email;
+      user.password = password;
       user.phoneNumber = phoneNumber;
-
       await user.save();
-
       res.status(201).json({
         success: true,
         user,
@@ -211,23 +191,22 @@ router.put(
   })
 );
 
-// update user avatar
+//update user Avatar
 router.put(
   "/update-avatar",
-  isAuthenticated,
-  catchAsyncErrors(async (req, res, next) => {
+  isAthuenticated,
+  catchAsyncError(async (req, res, next) => {
     try {
       let existsUser = await User.findById(req.user.id);
       if (req.body.avatar !== "") {
         const imageId = existsUser.avatar.public_id;
 
-        await cloudinary.v2.uploader.destroy(imageId);
+        await cloudinary.uploader.destroy(imageId);
 
-        const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+        const myCloud = await cloudinary.uploader.upload(req.body.avatar, {
           folder: "avatars",
           width: 150,
         });
-
         existsUser.avatar = {
           public_id: myCloud.public_id,
           url: myCloud.secure_url,
@@ -238,44 +217,40 @@ router.put(
 
       res.status(200).json({
         success: true,
-        user: existsUser,
+        existsUser,
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
   })
 );
-
-// update user addresses
+//update User Addresses
 router.put(
   "/update-user-addresses",
-  isAuthenticated,
-  catchAsyncErrors(async (req, res, next) => {
+  isAthuenticated,
+  catchAsyncError(async (req, res, next) => {
     try {
       const user = await User.findById(req.user.id);
-
-      const sameTypeAddress = user.addresses.find(
+      const sameTypeAdress = user.addresses.find(
         (address) => address.addressType === req.body.addressType
       );
-      if (sameTypeAddress) {
+      if (sameTypeAdress) {
         return next(
-          new ErrorHandler(`${req.body.addressType} address already exists`)
+          new ErrorHandler(
+            `${req.body.addressType} address is already exists`,
+            400
+          )
         );
       }
-
-      const existsAddress = user.addresses.find(
+      const existAddress = user.addresses.find(
         (address) => address._id === req.body._id
       );
-
-      if (existsAddress) {
-        Object.assign(existsAddress, req.body);
+      if (existAddress) {
+        Object.assign(existAddress, req.body);
       } else {
-        // add the new address to the array
         user.addresses.push(req.body);
       }
-
       await user.save();
-
       res.status(200).json({
         success: true,
         user,
@@ -285,74 +260,57 @@ router.put(
     }
   })
 );
-
-// delete user address
+//delete user address
 router.delete(
-  "/delete-user-address/:id",
-  isAuthenticated,
-  catchAsyncErrors(async (req, res, next) => {
+  `/delete-user-address/:id`,
+  isAthuenticated,
+  catchAsyncError(async (req, res, next) => {
     try {
       const userId = req.user._id;
       const addressId = req.params.id;
-
+      //“Find a user by their ID , then (pull/remove) one address from their list of addresses.
       await User.updateOne(
-        {
-          _id: userId,
-        },
+        { _id: userId },
         { $pull: { addresses: { _id: addressId } } }
       );
-
       const user = await User.findById(userId);
-
-      res.status(200).json({ success: true, user });
-    } catch (error) {
-      return next(new ErrorHandler(error.message, 500));
-    }
-  })
-);
-
-// update user password
-router.put(
-  "/update-user-password",
-  isAuthenticated,
-  catchAsyncErrors(async (req, res, next) => {
-    try {
-      const user = await User.findById(req.user.id).select("+password");
-
-      const isPasswordMatched = await user.comparePassword(
-        req.body.oldPassword
-      );
-
-      if (!isPasswordMatched) {
-        return next(new ErrorHandler("Old password is incorrect!", 400));
-      }
-
-      if (req.body.newPassword !== req.body.confirmPassword) {
-        return next(
-          new ErrorHandler("Password doesn't matched with each other!", 400)
-        );
-      }
-      user.password = req.body.newPassword;
-
-      await user.save();
-
       res.status(200).json({
         success: true,
-        message: "Password updated successfully!",
+        user,
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
   })
 );
+//update password
+router.put(`/update-user-password`, isAthuenticated, async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id).select("+password");
+    const comparePassword = await user.comparePassword(req.body.oldPassword);
+    if (!comparePassword) {
+      return next(new ErrorHandler("Wrong Password", 400));
+    }
+    if (req.body.newPassword !== req.body.confirmPassword) {
+      return next(new ErrorHandler("Password dosn't match ", 400));
+    }
+    user.password = req.body.newPassword;
+    await user.save();
+    res.status(200).json({
+      success: true,
+      message: "Password Updated Successfully!",
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+});
 
-// find user infoormation with the userId
+//find user infromation with the userId
 router.get(
   "/user-info/:id",
-  catchAsyncErrors(async (req, res, next) => {
+  catchAsyncError(async (req, res, next) => {
     try {
       const user = await User.findById(req.params.id);
-
       res.status(201).json({
         success: true,
         user,
@@ -363,17 +321,17 @@ router.get(
   })
 );
 
-// all users --- for admin
+//get all Users ----> (Admin)
 router.get(
   "/admin-all-users",
-  isAuthenticated,
+  isAthuenticated,
   isAdmin("Admin"),
-  catchAsyncErrors(async (req, res, next) => {
+  catchAsyncError(async (req, res, next) => {
     try {
       const users = await User.find().sort({
         createdAt: -1,
       });
-      res.status(201).json({
+      res.status(200).json({
         success: true,
         users,
       });
@@ -382,31 +340,23 @@ router.get(
     }
   })
 );
-
-// delete users --- admin
+//DeleteUser ---admin
 router.delete(
-  "/delete-user/:id",
-  isAuthenticated,
+  "/admin-delete-user/:id",
+  isAthuenticated,
   isAdmin("Admin"),
-  catchAsyncErrors(async (req, res, next) => {
+  catchAsyncError(async (req, res, next) => {
     try {
       const user = await User.findById(req.params.id);
-
       if (!user) {
         return next(
-          new ErrorHandler("User is not available with this id", 400)
+          new ErrorHandler(`User is not available with this ${id}!`, 400)
         );
       }
-
-      const imageId = user.avatar.public_id;
-
-      await cloudinary.v2.uploader.destroy(imageId);
-
       await User.findByIdAndDelete(req.params.id);
-
-      res.status(201).json({
+      res.status(200).json({
         success: true,
-        message: "User deleted successfully!",
+        message: "User Deleted Successfully!",
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
