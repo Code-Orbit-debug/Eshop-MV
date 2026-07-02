@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { AiOutlinePlusCircle } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { createProduct } from "../../redux/actions/product";
 import { categoriesData } from "../../static/data";
+import { AiOutlinePlusCircle } from "react-icons/ai";
+import { createProduct } from "../../redux/actions/product";
 import { toast } from "react-toastify";
-
 const CreateProduct = () => {
-  const { seller } = useSelector((state) => state.seller);
   const { success, error } = useSelector((state) => state.products);
+  const { seller } = useSelector((state) => state.seller);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -20,26 +20,22 @@ const CreateProduct = () => {
   const [originalPrice, setOriginalPrice] = useState();
   const [discountPrice, setDiscountPrice] = useState();
   const [stock, setStock] = useState();
-
   useEffect(() => {
     if (error) {
       toast.error(error);
+      dispatch({ type: "clearErrors" });
     }
     if (success) {
-      toast.success("Product created successfully!");
+      toast.success("Product Created Successfully!");
       navigate("/dashboard");
       window.location.reload();
     }
-  }, [dispatch, error, success, navigate]);
-
+  }, [dispatch, error, success]);
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-
     setImages([]);
-
     files.forEach((file) => {
       const reader = new FileReader();
-
       reader.onload = () => {
         if (reader.readyState === 2) {
           setImages((old) => [...old, reader.result]);
@@ -48,23 +44,8 @@ const CreateProduct = () => {
       reader.readAsDataURL(file);
     });
   };
-
-  const handleSubmit = (e) => {
+  const HandleSubmit = (e) => {
     e.preventDefault();
-
-    const newForm = new FormData();
-
-    images.forEach((image) => {
-      newForm.set("images", image);
-    });
-    newForm.append("name", name);
-    newForm.append("description", description);
-    newForm.append("category", category);
-    newForm.append("tags", tags);
-    newForm.append("originalPrice", originalPrice);
-    newForm.append("discountPrice", discountPrice);
-    newForm.append("stock", stock);
-    newForm.append("shopId", seller._id);
     dispatch(
       createProduct({
         name,
@@ -79,12 +60,10 @@ const CreateProduct = () => {
       })
     );
   };
-
   return (
     <div className="w-[90%] 800px:w-[50%] bg-white  shadow h-[80vh] rounded-[4px] p-3 overflow-y-scroll">
       <h5 className="text-[30px] font-Poppins text-center">Create Product</h5>
-      {/* create product form */}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={HandleSubmit}>
         <br />
         <div>
           <label className="pb-2">
@@ -94,9 +73,9 @@ const CreateProduct = () => {
             type="text"
             name="name"
             value={name}
-            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm capitalize"
             onChange={(e) => setName(e.target.value)}
-            placeholder="Enter your product name..."
+            placeholder="Enter Your Product Name "
           />
         </div>
         <br />
@@ -111,9 +90,9 @@ const CreateProduct = () => {
             type="text"
             name="description"
             value={description}
-            className="mt-2 appearance-none block w-full pt-2 px-3 border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            className="mt-2 appearance-none block w-full pt-2 px-3 border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm capitalize"
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Enter your product description..."
+            placeholder="Enter your product description"
           ></textarea>
         </div>
         <br />
@@ -122,7 +101,8 @@ const CreateProduct = () => {
             Category <span className="text-red-500">*</span>
           </label>
           <select
-            className="w-full mt-2 border h-[35px] rounded-[5px]"
+            className="w-full mt-2 border h-[35px] rounded-[5px] capitalize
+              "
             value={category}
             onChange={(e) => setCategory(e.target.value)}
           >
@@ -142,9 +122,9 @@ const CreateProduct = () => {
             type="text"
             name="tags"
             value={tags}
-            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm capitalize"
             onChange={(e) => setTags(e.target.value)}
-            placeholder="Enter your product tags..."
+            placeholder="Enter your product tags"
           />
         </div>
         <br />
@@ -154,9 +134,9 @@ const CreateProduct = () => {
             type="number"
             name="price"
             value={originalPrice}
-            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm capitalize"
             onChange={(e) => setOriginalPrice(e.target.value)}
-            placeholder="Enter your product price..."
+            placeholder="Enter your product price"
           />
         </div>
         <br />
@@ -219,7 +199,7 @@ const CreateProduct = () => {
             <input
               type="submit"
               value="Create"
-              className="mt-2 cursor-pointer appearance-none text-center block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="mt-2 cursor-pointer appearance-none text-center block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none  hover:opacity-85 focus:ring-blue-500 bg-slate-800 focus:border-blue-500 sm:text-sm capitalize text-[#fff] "
             />
           </div>
         </div>
