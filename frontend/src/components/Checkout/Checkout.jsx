@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import styles from "../../styles/styles";
 import { Country, State } from "country-state-city";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -7,6 +6,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import { server } from "../../server";
 import { toast } from "react-toastify";
+import styles from "../../styles/styles";
 
 const Checkout = () => {
   const { user } = useSelector((state) => state.user);
@@ -27,31 +27,34 @@ const Checkout = () => {
   }, []);
 
   const paymentSubmit = () => {
-   if(address1 === "" || address2 === "" || zipCode === null || country === "" || city === ""){
-      toast.error("Please choose your delivery address!")
-   } else{
-    const shippingAddress = {
-      address1,
-      address2,
-      zipCode,
-      country,
-      city,
-    };
-
-    const orderData = {
-      cart,
-      totalPrice,
-      subTotalPrice,
-      shipping,
-      discountPrice,
-      shippingAddress,
-      user,
+    if (
+      address1 == "" ||
+      address2 == "" ||
+      zipCode == null ||
+      country == "" ||
+      city == ""
+    ) {
+      toast.error("Please Chose Your Delevired Address!");
+    } else {
+      const shippingAddress = {
+        address1,
+        address2,
+        zipCode,
+        country,
+        city,
+      };
+      const orderData = {
+        cart,
+        totalPrice,
+        subTotalPrice,
+        shipping,
+        discountPrice,
+        shippingAddress,
+        user,
+      };
+      localStorage.setItem("latestOrder", JSON.stringify(orderData));
+      navigate("/payment");
     }
-
-    // update local storage with the updated orders array
-    localStorage.setItem("latestOrder", JSON.stringify(orderData));
-    navigate("/payment");
-   }
   };
 
   const subTotalPrice = cart.reduce(
@@ -61,12 +64,19 @@ const Checkout = () => {
 
   // this is shipping cost variable
   const shipping = subTotalPrice * 0.1;
+  //discount price variable
+  const discountPercentage = couponCodeData ? discountPrice : "";
+  //total price variable
+  const totalPrice = couponCodeData
+    ? (subTotalPrice + shipping - discountPercentage).toFixed(2)
+    : (subTotalPrice + shipping).toFixed(2);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const name = couponCode;
-
     await axios.get(`${server}/coupon/get-coupon-value/${name}`).then((res) => {
+      //if a coupon code of a shop is exist then wee aree checking that the cart itemed shop id matched with the coupon code shop id
+      //if matched then we are calculating the discount price and setting the coupon code data to the state
       const shopId = res.data.couponCode?.shopId;
       const couponCodeValue = res.data.couponCode?.value;
       if (res.data.couponCode !== null) {
@@ -93,14 +103,6 @@ const Checkout = () => {
       }
     });
   };
-
-  const discountPercentenge = couponCodeData ? discountPrice : "";
-
-  const totalPrice = couponCodeData
-    ? (subTotalPrice + shipping - discountPercentenge).toFixed(2)
-    : (subTotalPrice + shipping).toFixed(2);
-
-  console.log(discountPercentenge);
 
   return (
     <div className="w-full flex flex-col items-center py-8">
@@ -130,7 +132,7 @@ const Checkout = () => {
             subTotalPrice={subTotalPrice}
             couponCode={couponCode}
             setCouponCode={setCouponCode}
-            discountPercentenge={discountPercentenge}
+            discountPercentage={discountPercentage}
           />
         </div>
       </div>
@@ -310,7 +312,7 @@ const CartData = ({
   subTotalPrice,
   couponCode,
   setCouponCode,
-  discountPercentenge,
+  discountPercentage,
 }) => {
   return (
     <div className="w-full bg-[#fff] rounded-md p-5 pb-8">
@@ -327,7 +329,7 @@ const CartData = ({
       <div className="flex justify-between border-b pb-3">
         <h3 className="text-[16px] font-[400] text-[#000000a4]">Discount:</h3>
         <h5 className="text-[18px] font-[600]">
-          - {discountPercentenge ? "$" + discountPercentenge.toString() : null}
+          - {discountPercentage ? "$" + discountPercentage.toString() : null}
         </h5>
       </div>
       <h5 className="text-[18px] font-[600] text-end pt-3">${totalPrice}</h5>
@@ -339,7 +341,6 @@ const CartData = ({
           placeholder="Coupoun code"
           value={couponCode}
           onChange={(e) => setCouponCode(e.target.value)}
-          required
         />
         <input
           className={`w-full h-[40px] border border-[#f63b60] text-center text-[#f63b60] rounded-[3px] mt-8 cursor-pointer`}

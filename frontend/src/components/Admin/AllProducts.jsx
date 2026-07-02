@@ -1,18 +1,25 @@
-import { Button } from "@material-ui/core";
-import { DataGrid } from "@material-ui/data-grid";
 import React, { useEffect, useState } from "react";
-import { AiOutlineEye } from "react-icons/ai";
+import Button from "@mui/material/Button";
+import { DataGrid } from "@mui/x-data-grid";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import { AiOutlineDelete, AiOutlineEye } from "react-icons/ai";
+import { toast } from "react-toastify";
 import { server } from "../../server";
-
+import axios from "axios";
 const AllProducts = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    axios.get(`${server}/product/admin-all-products`, {withCredentials: true}).then((res) => {
+    axios
+      .get(`${server}/product/admin-all-products`, {
+        withCredentials: true,
+      })
+      .then((res) => {
         setData(res.data.products);
-    })
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message);
+      });
   }, []);
 
   const columns = [
@@ -48,7 +55,6 @@ const AllProducts = () => {
       field: "Preview",
       flex: 0.8,
       minWidth: 100,
-      headerName: "",
       type: "number",
       sortable: false,
       renderCell: (params) => {
@@ -64,11 +70,9 @@ const AllProducts = () => {
       },
     },
   ];
-
   const row = [];
-
   data &&
-  data.forEach((item) => {
+    data.forEach((item) => {
       row.push({
         id: item._id,
         name: item.name,
@@ -77,20 +81,18 @@ const AllProducts = () => {
         sold: item?.sold_out,
       });
     });
-
   return (
     <>
-        <div className="w-full mx-8 pt-1 mt-10 bg-white">
-          <DataGrid
-            rows={row}
-            columns={columns}
-            pageSize={10}
-            disableSelectionOnClick
-            autoHeight
-          />
-        </div>
+      <div className="w-full">
+        <DataGrid
+          rows={row}
+          columns={columns}
+          pageSize={10}
+          disableSelectionOnClick
+          autoHeight
+        />
+      </div>
     </>
   );
 };
-
 export default AllProducts;
