@@ -1,4 +1,4 @@
-import LoginPage from "../pages/Login";
+import LoginPage from "../pages/LoginPage.jsx";
 import SignupPage from "../pages/SignupPage";
 import ActivationPage from "../pages/ActivationPage";
 import HomePage from "../pages/HomePage";
@@ -14,9 +14,9 @@ import ProfilePage from "../pages/ProfilePage";
 import ShopCreatePage from "../pages/ShopCreate";
 import SellerActivationPage from "../pages/SellerActivationPage";
 import ShopLoginPage from "../pages/ShopLoginPage";
-import OrderDetailsPage from "../pages/OrderDetailsPage";
+import OrderDetailPage from "../pages/OrderDetailsPage";
 import TrackOrderPage from "../pages/TrackOrderPage";
-import UserInbox from "../pages/UserInbox.jsx";
+import UserInboxPage from "../pages/UserInbox.jsx";
 
 export { 
     LoginPage,
@@ -35,7 +35,7 @@ export {
     ShopCreatePage,
     SellerActivationPage,
     ShopLoginPage,
-    OrderDetailsPage,
+    OrderDetailPage,
     TrackOrderPage,
-    UserInbox
+    UserInboxPage
 };

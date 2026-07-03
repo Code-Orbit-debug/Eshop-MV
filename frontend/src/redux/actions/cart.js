@@ -1,7 +1,7 @@
 // add to cart
 export const addTocart = (data) => async (dispatch, getState) => {
   dispatch({
-    type: "addToCart",
+    type: "addTocart",
     payload: data,
   });
 

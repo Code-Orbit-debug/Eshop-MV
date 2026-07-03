@@ -36,7 +36,7 @@ const ProductDetailsCard = ({ setOpen, data }) => {
     setCount(count + 1);
   };
 
-  const addToCartHandler = (id) => {
+  const addTocartHandler = (id) => {
     const isItemExists = cart && cart.find((i) => i._id === id);
     if (isItemExists) {
       toast.error("Item already in cart!");
@@ -162,7 +162,7 @@ const ProductDetailsCard = ({ setOpen, data }) => {
                 </div>
                 <div
                   className={`${styles.button} mt-6 rounded-[4px] h-11 flex items-center`}
-                  onClick={() => addToCartHandler(data._id)}
+                  onClick={() => addTocartHandler(data._id)}
                 >
                   <span className="text-[#fff] flex items-center">
                     Add to cart <AiOutlineShoppingCart className="ml-1" />

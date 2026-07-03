@@ -11,7 +11,7 @@ import { backend_url, server } from "../../server";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllProductsShop } from "../../redux/actions/product";
 import { toast } from "react-toastify";
-import { addToCart } from "../../redux/actions/cart";
+import { addTocart } from "../../redux/actions/cart";
 import {
   addToWishList,
   removeFromWishList,
@@ -56,7 +56,7 @@ const ProductDetails = ({ data }) => {
     dispatch(addToWishList(data));
   };
 
-  const addToCartHandler = (id) => {
+  const addTocartHandler = (id) => {
     const isItemExists = cart && cart.find((i) => i._id === id);
     if (isItemExists) {
       toast.error("Item is already in the cart!");
@@ -65,7 +65,7 @@ const ProductDetails = ({ data }) => {
         toast.error("Product stock limited!");
       } else {
         const cartData = { ...data, qty: count };
-        dispatch(addToCart(cartData));
+        dispatch(addTocart(cartData));
         toast.success("Item added to cart successfully!");
       }
     }
@@ -211,7 +211,7 @@ const ProductDetails = ({ data }) => {
                 {/* Add to cart Button */}
                 <div
                   className={`${styles.button} !rounded !mt-6 capitalize text-[#fff] font-semibold !h-11 flex items-center`}
-                  onClick={() => addToCartHandler(data._id)}
+                  onClick={() => addTocartHandler(data._id)}
                 >
                   <span className="text-white flex items-center gap-2">
                     add to cart

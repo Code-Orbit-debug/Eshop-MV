@@ -4,12 +4,12 @@ import CountDown from "./CountDown";
 import { backend_url } from "../../server";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { addToCart } from "../../redux/actions/cart";
+import { addTocart } from "../../redux/actions/cart";
 import { Link } from "react-router-dom";
 const EventCard = ({ active, data }) => {
   const dispatch = useDispatch();
   const { cart } = useSelector((state) => state.cart);
-  const addToCartHandler = (product) => {
+  const addTocartHandler = (product) => {
     const isItemExists = cart && cart.find((i) => i._id === product._id);
     if (isItemExists) {
       toast.error("Item is already in the cart!");
@@ -18,7 +18,7 @@ const EventCard = ({ active, data }) => {
         toast.error("Product stock limited!");
       } else {
         const cartData = { ...product, qty: 1 };
-        dispatch(addToCart(cartData));
+        dispatch(addTocart(cartData));
         toast.success("Item added to cart successfully!");
       }
     }
@@ -56,7 +56,7 @@ const EventCard = ({ active, data }) => {
           <div
             className={`${styles.button} text-[#fff] ml-5`}
             onClick={() => {
-              addToCartHandler(data);
+              addTocartHandler(data);
             }}
           >
             Add to Cart

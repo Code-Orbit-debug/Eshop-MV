@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { categoriesData } from "../../static/data";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { toast } from "react-toastify";
-import { createEvent, getAllEventsShop } from "../../redux/actions/event";
+import { createevent, getAllEventsShop } from "../../redux/actions/event";
 const CreateEvent = () => {
   const { success, error } = useSelector((state) => state.events);
   const { seller } = useSelector((state) => state.seller);
@@ -101,7 +101,7 @@ const CreateEvent = () => {
       start_Date: startDate?.toISOString(),
       Finish_Date: endDate?.toISOString(),
     };
-    dispatch(createEvent(data));
+    dispatch(createevent(data));
  
   };
   return (

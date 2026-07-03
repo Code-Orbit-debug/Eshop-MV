@@ -7,7 +7,7 @@ import { AiOutlineHeart } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { removeFromWishList } from "../../redux/actions/wishlist";
 import { backend_url } from "../../server";
-import { addToCart } from "../../redux/actions/cart";
+import { addTocart } from "../../redux/actions/cart";
 
 const Wishlist = ({ setOpenWishlist }) => {
   const { wishlist } = useSelector((state) => state.wishlist);
@@ -15,9 +15,9 @@ const Wishlist = ({ setOpenWishlist }) => {
   const removeFromWishlistHandler = (data) => {
     dispatch(removeFromWishList(data));
   };
-  const addToCartHandler = (data) => {
+  const addTocartHandler = (data) => {
     const newData = { ...data, qty: 1 };
-    dispatch(addToCart(newData));
+    dispatch(addTocart(newData));
     setOpenWishlist(false);
   };
   return (
@@ -45,7 +45,7 @@ const Wishlist = ({ setOpenWishlist }) => {
               wishlist.map((item, index) => (
                 <CartSingle
                   removeFromWishlistHandler={removeFromWishlistHandler}
-                  addToCartHandler={addToCartHandler}
+                  addTocartHandler={addTocartHandler}
                   key={index}
                   item={item}
                 />
@@ -57,7 +57,7 @@ const Wishlist = ({ setOpenWishlist }) => {
   );
 };
 
-const CartSingle = ({ item, removeFromWishlistHandler, addToCartHandler }) => {
+const CartSingle = ({ item, removeFromWishlistHandler, addTocartHandler }) => {
   const [value, setValue] = useState(1);
   const totalPrice = item.discountPrice * value;
   return (
@@ -83,7 +83,7 @@ const CartSingle = ({ item, removeFromWishlistHandler, addToCartHandler }) => {
         <div>
           <BsCartPlus
             size={20}
-            onClick={() => addToCartHandler(item)}
+            onClick={() => addTocartHandler(item)}
             className="cursor-pointer"
             title="Add to Cart"
           />

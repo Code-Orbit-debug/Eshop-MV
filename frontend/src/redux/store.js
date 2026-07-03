@@ -1,14 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { userReducer } from "./reducers/user";
-import { sellerReducer } from "./reducers/seller";
-import { productReducer } from "./reducers/product";
-import { eventReducer } from "./reducers/event";
-import { cartReducer } from "./reducers/cart";
-import { wishlistReducer } from "./reducers/wishlist";
-import { orderReducer } from "./reducers/order";
-
-
-const Store = configureStore({
+import { userReducer } from "./reducers/userReducer";
+import { sellerReducer } from "./reducers/sellerReducer";
+import { productReducer } from "./reducers/productReducer";
+import { eventReducer } from "./reducers/eventReducer";
+import { cartReducer } from "./reducers/cartReducer";
+import { wishlistReducer } from "./reducers/wishlistReducer";
+import { orderReducer } from "./reducers/orderReducer";
+export const store = configureStore({
   reducer: {
     user: userReducer,
     seller: sellerReducer,
@@ -19,5 +17,4 @@ const Store = configureStore({
     order: orderReducer,
   },
 });
-
-export default Store;
+export default store;

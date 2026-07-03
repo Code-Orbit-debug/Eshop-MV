@@ -6,7 +6,7 @@ import styles from "../../styles/styles";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart, removeFromCart } from "../../redux/actions/cart";
+import { addTocart, removeFromCart } from "../../redux/actions/cart";
 import { toast } from "react-toastify";
 const Cart = ({ setOpenCart }) => {
   const { cart } = useSelector((state) => state.cart);
@@ -17,7 +17,7 @@ const Cart = ({ setOpenCart }) => {
   };
 
   const qtyChangeHandler = (data) => {
-    dispatch(addToCart(data));
+    dispatch(addTocart(data));
   };
 
   const totalPrice = cart.reduce(

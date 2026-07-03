@@ -607,7 +607,7 @@ export const navItems = [
     },
   ];
   
-  export const footercompanyLinks = [
+  export const footerCompanyLinks = [
     {
       name: "Game & Video",
     },
