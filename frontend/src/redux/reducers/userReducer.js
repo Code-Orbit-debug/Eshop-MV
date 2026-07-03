@@ -2,7 +2,7 @@ import { createReducer } from "@reduxjs/toolkit";
 
 const initialState = {
   isAuthenticated: false,
-  loading: false,
+  loading: true,
   error: null,
   user: null,
   addressloading: false,
@@ -25,6 +25,7 @@ export const userReducer = createReducer(initialState, (builder) => {
       state.loading = false;
       state.error = action.payload;
       state.isAuthenticated = false;
+      state.user = null;
     })
     //logout user
    .addCase("LogoutSuccess", (state) => {

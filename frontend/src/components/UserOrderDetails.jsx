@@ -21,10 +21,9 @@ const UserOrderDetails = () => {
   const { id } = useParams();
   const data = orders && orders.find((item) => item._id === id);
   useEffect(() => {
-    if (user && user._id) {
-      dispatch(getAllOrdersOfUser(user._id));
-    }
-  }, [dispatch, user._id]);
+    if (!user?._id) return;
+    dispatch(getAllOrdersOfUser(user?._id));
+  }, [dispatch, user?._id]);
 
   const reviewHandler = async (e) => {
     e.preventDefault();
@@ -44,7 +43,7 @@ const UserOrderDetails = () => {
       )
       .then((res) => {
         toast.success(res.data.message);
-        dispatch(getAllOrdersOfUser(user._id));
+        dispatch(getAllOrdersOfUser(user?._id));
         setComment("");
         setRating(null);
         setOpen(false);
@@ -61,7 +60,7 @@ const UserOrderDetails = () => {
       })
       .then((res) => {
         toast.success(res.data.message);
-        dispatch(getAllOrdersOfUser(user._id));
+        dispatch(getAllOrdersOfUser(user?._id));
       })
       .catch((error) => toast.error(error.response.data.message));
   };

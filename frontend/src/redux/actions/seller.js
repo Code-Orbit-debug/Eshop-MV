@@ -9,9 +9,16 @@ export const getSeller = () => async (dispatch) => {
     const { data } = await axios.get(`${server}/shop/get-seller`, {
       withCredentials: true,
     });
+    if (!data?.seller?._id) {
+      dispatch({
+        type: "LoadSellerFail",
+        payload: "Seller not found",
+      });
+      return;
+    }
     dispatch({
       type: "LoadSellerSuccess",
-      payload: data.seller,
+      payload: data?.seller,
     });
   } catch (error) {
     dispatch({

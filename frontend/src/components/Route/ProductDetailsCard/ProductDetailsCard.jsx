@@ -52,12 +52,12 @@ const ProductDetailsCard = ({ setOpen, data }) => {
   };
 
   useEffect(() => {
-    if (wishlist && wishlist.find((i) => i._id === data._id)) {
+    if (wishlist && data?._id && wishlist.find((i) => i._id === data._id)) {
       setClick(true);
     } else {
       setClick(false);
     }
-  }, [wishlist, data._id]);
+  }, [wishlist, data?._id]);
 
   const removeFromWishlistHandler = (data) => {
     setClick(!click);
@@ -84,7 +84,7 @@ const ProductDetailsCard = ({ setOpen, data }) => {
               <div className="w-full 800px:w-[50%]">
                 <img src={`${data.images && data.images[0]?.url}`} alt="" />
                 <div className="flex">
-                  <Link to={`/shop/preview/${data.shop._id}`} className="flex">
+                  <Link to={`/shop/preview/${data?.shop?._id}`} className="flex">
                     <img
                       src={`${data.images && data.images[0]?.url}`}
                       alt=""
@@ -92,7 +92,7 @@ const ProductDetailsCard = ({ setOpen, data }) => {
                     />
                     <div>
                       <h3 className={`${styles.shop_name}`}>
-                        {data.shop.name}
+                        {data?.shop?.name}
                       </h3>
                       <h5 className="pb-3 text-[15px]">{data?.ratings} Ratings</h5>
                     </div>

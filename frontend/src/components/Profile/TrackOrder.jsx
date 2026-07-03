@@ -9,8 +9,9 @@ const TrackOrder = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
   useEffect(() => {
-    dispatch(getAllOrdersOfUser(user._id));
-  }, [dispatch, user._id]);
+    if (!user?._id) return;
+    dispatch(getAllOrdersOfUser(user?._id));
+  }, [dispatch, user?._id]);
   const data = orders && orders.find((item) => item._id === id);
 
   return (

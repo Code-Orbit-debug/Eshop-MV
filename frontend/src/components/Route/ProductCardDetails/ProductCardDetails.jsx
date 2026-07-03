@@ -23,12 +23,12 @@ const ProductCardDetails = ({ setOpen, data }) => {
   const [click, setClick] = useState(false);
 
   useEffect(() => {
-    if (wishlist && wishlist.find((i) => i._id === data._id)) {
+    if (wishlist && data?._id && wishlist.find((i) => i._id === data._id)) {
       setClick(true);
     } else {
       setClick(false);
     }
-  }, [wishlist, data._id]);
+  }, [wishlist, data?._id]);
 
   const removeFromWishlistHandler = (data) => {
     setClick(!click);
@@ -97,7 +97,7 @@ const ProductCardDetails = ({ setOpen, data }) => {
                   )}
                   {/* Ratings to Product */}
                   <div>
-                    <h3 className={`${styles.shop_name}`}>{data.shop.name}</h3>
+                    <h3 className={`${styles.shop_name}`}>{data?.shop?.name}</h3>
                     <h5 className="pb-3 text-[15px] ">
                       ({data?.shop?.ratings}) Ratings
                     </h5>

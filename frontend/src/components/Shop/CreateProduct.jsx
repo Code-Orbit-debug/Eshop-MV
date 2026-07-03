@@ -55,7 +55,7 @@ const CreateProduct = () => {
         originalPrice,
         discountPrice,
         stock,
-        shopId: seller._id,
+        shopId: seller?._id,
         images,
       })
     );

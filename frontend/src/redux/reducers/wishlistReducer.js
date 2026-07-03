@@ -1,7 +1,7 @@
 import { createReducer } from "@reduxjs/toolkit";
 const initialState = {
-  wishlist: localStorage.getItem("wishListItems")
-    ? JSON.parse(localStorage.getItem("wishListItems"))
+  wishlist: localStorage.getItem("wishlistItems")
+    ? JSON.parse(localStorage.getItem("wishlistItems"))
     : [],
   cartTotalPrice: 0,
 };
@@ -17,10 +17,10 @@ export const wishlistReducer = createReducer(initialState, (builder) => {
       } else {
         state.wishlist.push(item);
       }
-      localStorage.setItem("wishListItems", JSON.stringify(state.wishlist));
+      localStorage.setItem("wishlistItems", JSON.stringify(state.wishlist));
     })
     .addCase("removeFromWishList", (state, action) => {
       state.wishlist = state.wishlist.filter((i) => i._id !== action.payload);
-      localStorage.setItem("wishListItems", JSON.stringify(state.wishlist));
+      localStorage.setItem("wishlistItems", JSON.stringify(state.wishlist));
     });
 });

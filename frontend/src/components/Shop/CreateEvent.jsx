@@ -52,7 +52,7 @@ const CreateEvent = () => {
     }
     if (success) {
       toast.success("Event Product Created Successfully!");
-      dispatch(getAllEventsShop(seller._id));
+      dispatch(getAllEventsShop(seller?._id));
       setImages([]);
       setName("");
       setDescription("");
@@ -66,7 +66,7 @@ const CreateEvent = () => {
       navigate("/dashboard");
      
     }
-  }, [dispatch, error, success,navigate]);
+  }, [dispatch, error, success, navigate, seller?._id]);
   // Image Change Handler
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -97,7 +97,7 @@ const CreateEvent = () => {
       discountPrice,
       stock,
       images,
-      shopId: seller._id,
+      shopId: seller?._id,
       start_Date: startDate?.toISOString(),
       Finish_Date: endDate?.toISOString(),
     };

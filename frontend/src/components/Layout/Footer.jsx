@@ -108,7 +108,7 @@ const Footer = () => {
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10
          text-center pt-2 text-gray-400 text-sm pb-8"
       >
-        <span>© Multivendor 2025. All rights reserved.</span>
+        <span>© Codingwithriha 2026. All rights reserved.</span>
         <span>Term Privacy. and Policy</span>
         <div className="sm:block flex items-center justify-center w-full">
           <img

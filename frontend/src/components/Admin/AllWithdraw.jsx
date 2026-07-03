@@ -102,7 +102,7 @@ const AllWithdraw = () => {
     data.forEach((item) => {
       row.push({
         id: item._id,
-        shopId: item.seller._id,
+        shopId: item.seller?._id,
         name: item.seller.name,
         amount: "US$ " + item.amount,
         status: item.status,

@@ -13,14 +13,17 @@ const AllEvents = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getAllEventsShop(seller._id));
-  }, []);
+    if (!seller?._id) return;
+    dispatch(getAllEventsShop(seller?._id));
+  }, [dispatch, seller?._id]);
 
   const handleDelete = (id) => {
     dispatch(deleteEvent(id))
       .then(() => {
         toast.success("Event deleted successfully!");
-        dispatch(getAllEventsShop(seller._id));
+        if (seller?._id) {
+          dispatch(getAllEventsShop(seller?._id));
+        }
       })
       .catch((err) => {
         toast.error(err);
