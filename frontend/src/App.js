@@ -13,9 +13,9 @@ import {
   HomePage,
   ProductsPage,
   ProductDetailsPage,
-  BestSelling,
-  Events,
-  CheckOutPage,
+  BestSellingPage,
+  EventsPage,
+  CheckoutPage,
   PaymentPage,
   FAQPage,
   ProfilePage,
@@ -25,7 +25,6 @@ import {
   OrderSuccessPage,
   OrderDetailPage,
   TrackOrderPage,
-  ShopAllRefundsPage,
   UserInboxPage,
 } from "./routes/Routes.js";
 
@@ -39,21 +38,22 @@ import {
   ShopCreateEvents,
   ShopAllEvents,
   ShopPreviewPage,
-  ShopAllCoupons,
+  ShopAllCoupouns,
   ShopAllOrders,
   ShopOrderDetails,
   ShopSettingsPage,
   ShopWithDrawMoneyPage,
   ShopInboxPage,
+  ShopAllRefundsPage,
 } from "./routes/ShopRoutes.js";
 import {
   AdminDashboardPage,
-  AdminDashboardUsersPage,
-  AdminDashboardSellerPage,
-  AdminDashboardOrdersPage,
-  AdminDashboardProductsPage,
-  AdminDashboardEventsPage,
-  AdminDashboardWithdrawPage,
+  AdminDashboardUsers,
+  AdminDashboardSeller,
+  AdminDashboardOrders,
+  AdminDashboardProducts,
+  AdminDashboardEvents,
+  AdminDashboardWithdraw,
 } from "./routes/AdminRoutes.js";
 
 import Store from "./redux/store.js";
@@ -115,8 +115,8 @@ const App = () => {
           />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/product/:id" element={<ProductDetailsPage />} />
-          <Route path="/best-selling" element={<BestSelling />} />
-          <Route path="/events" element={<Events />} />
+          <Route path="/best-selling" element={<BestSellingPage />} />
+          <Route path="/events" element={<EventsPage />} />
           <Route path="/faq" element={<FAQPage />} />
           <Route
             path="/profile"
@@ -158,7 +158,7 @@ const App = () => {
             path="/checkout"
             element={
               <ProtectedRoute>
-                <CheckOutPage />
+                <CheckoutPage />
               </ProtectedRoute>
             }
           />
@@ -255,7 +255,7 @@ const App = () => {
             path="/dashboard-coupons"
             element={
               <SellerProtectedRoute>
-                <ShopAllCoupons />
+                <ShopAllCoupouns />
               </SellerProtectedRoute>
             }
           />
@@ -292,7 +292,7 @@ const App = () => {
             path="/admin-users"
             element={
               <ProtectedAdminRoute>
-                <AdminDashboardUsersPage />
+                <AdminDashboardUsers />
               </ProtectedAdminRoute>
             }
           />
@@ -300,7 +300,7 @@ const App = () => {
             path="/admin-sellers"
             element={
               <ProtectedAdminRoute>
-                <AdminDashboardSellerPage />
+                <AdminDashboardSeller />
               </ProtectedAdminRoute>
             }
           />
@@ -308,7 +308,7 @@ const App = () => {
             path="/admin-orders"
             element={
               <ProtectedAdminRoute>
-                <AdminDashboardOrdersPage />
+                <AdminDashboardOrders />
               </ProtectedAdminRoute>
             }
           />
@@ -316,7 +316,7 @@ const App = () => {
             path="/admin-products"
             element={
               <ProtectedAdminRoute>
-                <AdminDashboardProductsPage />
+                <AdminDashboardProducts />
               </ProtectedAdminRoute>
             }
           />
@@ -324,7 +324,7 @@ const App = () => {
             path="/admin-events"
             element={
               <ProtectedAdminRoute>
-                <AdminDashboardEventsPage />
+                <AdminDashboardEvents />
               </ProtectedAdminRoute>
             }
           />
@@ -332,7 +332,7 @@ const App = () => {
             path="/admin-withdraw-request"
             element={
               <ProtectedAdminRoute>
-                <AdminDashboardWithdrawPage />
+                <AdminDashboardWithdraw />
               </ProtectedAdminRoute>
             }
           />
