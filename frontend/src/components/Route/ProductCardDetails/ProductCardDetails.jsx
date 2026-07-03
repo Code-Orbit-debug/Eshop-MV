@@ -7,7 +7,7 @@ import {
   AiOutlineMessage,
   AiOutlineShoppingCart,
 } from "react-icons/ai";
-import { addToCart } from "../../../redux/actions/cart";
+import { addTocart } from "../../../redux/actions/cart";
 import { useDispatch, useSelector } from "react-redux";
 import { backend_url } from "../../../server";
 import { toast } from "react-toastify";
@@ -48,7 +48,7 @@ const ProductCardDetails = ({ setOpen, data }) => {
   const decrementCount = () => {
     if (count > 1) setCount(count - 1);
   };
-  const AddToCartHandler = (id) => {
+  const addTocartHandler = (id) => {
     const isItemExist = cart.find((i) => i._id === id);
     if (isItemExist) {
       toast.error("Item already in cart");
@@ -60,7 +60,7 @@ const ProductCardDetails = ({ setOpen, data }) => {
           ...data,
           qty: count,
         };
-        dispatch(addToCart(cartItem));
+        dispatch(addTocart(cartItem));
         toast.success("Item added to cart successfully");
       }
     }
@@ -170,7 +170,7 @@ const ProductCardDetails = ({ setOpen, data }) => {
                 </div>
                 <div
                   className={`${styles.button} mt-6 rounded-[4px] h-11 flex items-center`}
-                  onClick={() => AddToCartHandler(data._id)}
+                  onClick={() => addTocartHandler(data._id)}
                 >
                   <span className="text-[#fff]  flex items-center ">
                     Add to Cart <AiOutlineShoppingCart className="ml-1" />

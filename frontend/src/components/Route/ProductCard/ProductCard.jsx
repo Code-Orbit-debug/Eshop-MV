@@ -7,7 +7,7 @@ import {
 } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart } from "../../../redux/actions/cart";
+import { addTocart } from "../../../redux/actions/cart";
 import { toast } from "react-toastify";
 import Ratings from "../../Products/Ratings";
 import styles from "../../../styles/styles";
@@ -38,7 +38,7 @@ const ProductCard = ({ data, isEvent }) => {
     setClick(!click);
     dispatch(addToWishList(data));
   };
-  const addToCartHandler = (id) => {
+  const addTocartHandler = (id) => {
     const isItemExists = cart && cart.find((i) => i._id === id);
     if (isItemExists) {
       toast.error("Item already in cart!");
@@ -47,7 +47,7 @@ const ProductCard = ({ data, isEvent }) => {
         toast.error("Product stock limited!");
       } else {
         const cartData = { ...data, qty: 1 };
-        dispatch(addToCart(cartData));
+        dispatch(addTocart(cartData));
         toast.success("Item added to cart successfully!");
       }
     }
@@ -134,7 +134,7 @@ const ProductCard = ({ data, isEvent }) => {
           <AiOutlineShoppingCart
             size={25}
             className="cursor-pointer absolute right-2 top-24"
-            onClick={() => addToCartHandler(data._id)}
+            onClick={() => addTocartHandler(data._id)}
             color="#444"
             title="Add to cart"
           />
