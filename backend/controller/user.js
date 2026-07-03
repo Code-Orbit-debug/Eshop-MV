@@ -14,24 +14,32 @@ const cloudinary = require("cloudinary").v2;
 //craete_user Route
 router.post("/create-user", async (req, res, next) => {
   try {
+    console.log("[create-user] Request received");
+
     const { name, email, password, avatar } = req.body;
 
     if (!name || !email || !password || !avatar) {
+      console.log("[create-user] Validation failed: missing fields");
       return next(new ErrorHandler("All fields are required", 400));
     }
 
+    console.log("[create-user] Avatar received, length:", avatar.length);
+
     const userEmail = await User.findOne({ email });
     if (userEmail) {
+      console.log("[create-user] User already exists:", email);
       return next(new ErrorHandler("User already exists", 400));
     }
 
-    // 🔥 MOVE THIS AFTER CHECKS (important)
+    console.log("[create-user] Uploading avatar to Cloudinary...");
     let myCloud;
     try {
       myCloud = await cloudinary.uploader.upload(avatar, {
         folder: "avatars",
       });
+      console.log("[create-user] Cloudinary upload success:", myCloud.public_id);
     } catch (err) {
+      console.error("[create-user] Cloudinary upload failed:", err.message);
       return next(new ErrorHandler("Image upload failed", 500));
     }
 
@@ -45,21 +53,27 @@ router.post("/create-user", async (req, res, next) => {
       },
     };
 
+    console.log("[create-user] Creating activation token...");
     const activationToken = createActivationToken(user);
 
-    const activationUrl = `https://eshop-mv.vercel.app/activation/${activationToken}`;
+    const frontendUrl =
+      process.env.FRONTEND_URL || "https://eshop-mv.vercel.app";
+    const activationUrl = `${frontendUrl}/activation/${activationToken}`;
 
+    console.log("[create-user] Sending activation email to:", email);
     await sendMail({
       email: user.email,
       subject: "Activate Your Account!",
       message: `Hello ${user.name}, activate here: ${activationUrl}`,
     });
+    console.log("[create-user] Activation email sent successfully");
 
     res.status(201).json({
       success: true,
       message: `Check email: ${user.email}`,
     });
   } catch (error) {
+    console.error("[create-user] Failed:", error.message);
     next(new ErrorHandler(error.message, 500));
   }
 });
