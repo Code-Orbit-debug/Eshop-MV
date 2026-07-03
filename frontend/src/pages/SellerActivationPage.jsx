@@ -11,9 +11,11 @@ const SellerActivationPage = () => {
     if (activation_token) {
       const sendRequest = async () => {
         await axios
-          .post(`${server}/shop/activation`, {
-            activation_token,
-          })
+          .post(
+            `${server}/shop/activation`,
+            { activation_token },
+            { withCredentials: true }
+          )
           .then((res) => {
             console.log(res);
           })

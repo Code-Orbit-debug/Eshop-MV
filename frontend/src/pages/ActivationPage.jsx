@@ -12,9 +12,11 @@ const ActivationPage = () => {
     if (activation_token) {
       const sendRequest = async () => {
         await axios
-          .post(`${server}/user/activation`, {
-            activation_token,
-          })
+          .post(
+            `${server}/user/activation`,
+            { activation_token },
+            { withCredentials: true }
+          )
           .then((res) => {
             console.log(res);
           })

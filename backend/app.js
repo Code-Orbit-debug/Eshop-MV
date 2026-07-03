@@ -6,6 +6,9 @@ const ErrorHandler = require("./middleware/error");
 
 const app = express();
 
+// Required behind Railway/Vercel reverse proxies for secure cookies
+app.set("trust proxy", 1);
+
 // Middleware
 app.use(express.json({ limit: "50mb" }));
 app.use(
@@ -15,7 +18,6 @@ app.use(
   })
 );
 app.use(cookieParser());
-
 
 const allowedOrigins = [
   "http://localhost:3000",
@@ -32,6 +34,7 @@ app.use(
 
 // Serve static files from /uploads via /uploads path
 app.use("/uploads", express.static("uploads"));
+
 // Root route
 app.get("/", (req, res) => {
   res.send("API is running :visit:  /health for status");
@@ -43,13 +46,10 @@ app.get("/health", (req, res) => {
     status: "OK",
     uptime: process.uptime(),
     timestamp: Date.now(),
+    emailProvider: process.env.RESEND_API_KEY ? "resend" : "smtp",
+    frontendUrl: process.env.FRONTEND_URL || null,
   });
 });
-
-// Config - Load environment variables if not in production
-if (process.env.NODE_ENV !== "PRODUCTION") {
-  require("dotenv").config({ path: "config/.env" });
-}
 
 //Import Routes
 const user = require("./controller/user");
@@ -62,6 +62,7 @@ const order = require("./controller/order");
 const converation = require("./controller/conversation");
 const message = require("./controller/message");
 const withdraw = require("./controller/withdraw");
+
 //Mount Routes
 app.use("/api/v2/user", user);
 app.use("/api/v2/shop", shop);
