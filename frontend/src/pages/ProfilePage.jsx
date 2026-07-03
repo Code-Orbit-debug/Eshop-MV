@@ -7,12 +7,12 @@ import ProfileContent from "../components/Profile/ProfileContent";
 import { useSelector } from "react-redux";
 
 const ProfilePage = () => {
-  const { loading } = useSelector((state) => state.user);
+  const { loading, user } = useSelector((state) => state.user);
   const [active, setActive] = useState(1);
 
   return (
     <div>
-      {loading ? (
+      {loading || !user?._id ? (
         <Loader />
       ) : (
         <>

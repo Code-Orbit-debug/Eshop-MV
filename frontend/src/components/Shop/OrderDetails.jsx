@@ -18,8 +18,9 @@ const OrderDetails = () => {
   const data = orders && orders.find((item) => item._id === id);
 
   useEffect(() => {
-    dispatch(getAllOrdersOfShop(seller._id));
-  }, [dispatch, seller._id]);
+    if (!seller?._id) return;
+    dispatch(getAllOrdersOfShop(seller?._id));
+  }, [dispatch, seller?._id]);
   useEffect(() => {
     if (data?.status)
     {
@@ -55,7 +56,9 @@ const OrderDetails = () => {
       )
       .then((res) => {
         toast.success("Order Updated Successfuly!");
-        dispatch(getAllOrdersOfShop(seller._id));
+        if (seller?._id) {
+          dispatch(getAllOrdersOfShop(seller?._id));
+        }
         navigate("/dashboard-orders");
       })
       .catch((error) => {

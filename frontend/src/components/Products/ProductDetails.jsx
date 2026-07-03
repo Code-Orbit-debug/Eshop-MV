@@ -31,13 +31,14 @@ const ProductDetails = ({ data }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getAllProductsShop(data && data?.shop._id));
+    if (!data?.shop?._id) return;
+    dispatch(getAllProductsShop(data?.shop?._id));
     if (wishlist && wishlist.find((i) => i._id === data?._id)) {
       setClick(true);
     } else {
       setClick(false);
     }
-  }, [dispatch, wishlist, data]);
+  }, [dispatch, wishlist, data?.shop?._id, data?._id]);
   const incrementCount = () => {
     setCout(count + 1);
   };
@@ -61,7 +62,7 @@ const ProductDetails = ({ data }) => {
     if (isItemExists) {
       toast.error("Item is already in the cart!");
     } else {
-      if (data.stock < count) {
+      if (data?.stock < count) {
         toast.error("Product stock limited!");
       } else {
         const cartData = { ...data, qty: count };
@@ -97,10 +98,10 @@ const ProductDetails = ({ data }) => {
 
 
   const handleMessageSubmit = async () => {
-    if (isAuthenticated) {
-      const groupTitle = data._id + user._id;
-      const userId = user._id;
-      const sellerId = data.shop._id;
+    if (isAuthenticated && user?._id && data?._id && data?.shop?._id) {
+      const groupTitle = data?._id + user?._id;
+      const userId = user?._id;
+      const sellerId = data?.shop?._id;
       axios
         .post(`${server}/conversation/create-new-converation`, {
           groupTitle,
@@ -356,7 +357,7 @@ const ProductsDetailsInfo = ({
                   className="w-[50px] h-[50px] rounded-full mr-2"
                 />
                 <div className="pl-3">
-                  <h3 className={`${styles.shop_name}`}>{data.shop.name}</h3>
+                  <h3 className={`${styles.shop_name}`}>{data?.shop?.name}</h3>
                   <h5 className="pb-2 text-[15px] ">
                     ({averageRating}/5)Ratings
                   </h5>
@@ -387,7 +388,7 @@ const ProductsDetailsInfo = ({
                   {totalReviewsLength}
                 </span>
               </h5>
-              <Link to={`/shop/preview/${data?.shop._id}`}>
+              <Link to={`/shop/preview/${data?.shop?._id}`}>
                 <div
                   className={`${styles.button} !rounded-[4px] !h-[39.5px] mt-3`}
                 >

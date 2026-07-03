@@ -23,8 +23,9 @@ const AllCoupons = () => {
   const { products } = useSelector((state) => state.products);
   const dispatch = useDispatch();
   useEffect(() => {
+    if (!seller?._id) return;
     axios
-      .get(`${server}/coupon/get-coupon/${seller._id}`, {
+      .get(`${server}/coupon/get-coupon/${seller?._id}`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -35,7 +36,7 @@ const AllCoupons = () => {
       .catch((error) => {
         setisLoading(false);
       });
-  }, [dispatch]);
+  }, [seller?._id]);
   
   const handleDelete = async (id) => {
     axios
@@ -59,7 +60,7 @@ const AllCoupons = () => {
           selectedProducts,
           value,
           shop: seller,
-          shopId: seller._id,
+          shopId: seller?._id,
         },
         { withCredentials: true }
       )

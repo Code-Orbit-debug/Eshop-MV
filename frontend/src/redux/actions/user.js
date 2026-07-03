@@ -9,6 +9,13 @@ export const getUser = () => async (dispatch) => {
     const { data } = await axios.get(`${server}/user/get-user`, {
       withCredentials: true,
     });
+    if (!data?.user?._id) {
+      dispatch({
+        type: "LoadUserFail",
+        payload: "User not found",
+      });
+      return;
+    }
     dispatch({
       type: "LoadUserSuccess",
       payload: data?.user,

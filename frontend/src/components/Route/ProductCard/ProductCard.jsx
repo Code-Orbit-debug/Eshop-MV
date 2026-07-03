@@ -24,12 +24,12 @@ const ProductCard = ({ data, isEvent }) => {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   useEffect(() => {
-    if (wishlist && wishlist.find((i) => i._id === data._id)) {
+    if (wishlist && data?._id && wishlist.find((i) => i._id === data._id)) {
       setClick(true);
     } else {
       setClick(false);
     }
-  }, [wishlist, data._id]);
+  }, [wishlist, data?._id]);
   const removeFromWishlistHandler = (data) => {
     setClick(!click);
     dispatch(removeFromWishList(data));
@@ -52,6 +52,10 @@ const ProductCard = ({ data, isEvent }) => {
       }
     }
   };
+  if (!data?._id) {
+    return null;
+  }
+
   return (
     <>
       <div className="w-full h-[370px] bg-white rounded-lg shadow-sm p-3 relative cursor-pointer">
@@ -69,8 +73,8 @@ const ProductCard = ({ data, isEvent }) => {
             className="w-full h-[170px] object-cover rounded-t-lg"
           />
         </Link>
-        <Link to={`/shop/preview/${data?.shop._id}`}>
-          <h5 className={`${styles.shop_name}`}>{data.shop.name}</h5>
+        <Link to={`/shop/preview/${data?.shop?._id}`}>
+          <h5 className={`${styles.shop_name}`}>{data?.shop?.name}</h5>
         </Link>
         <Link
           to={`${

@@ -16,14 +16,15 @@ const DashBoardHero = () => {
   const { products } = useSelector((state) => state.products);
   const [deliveredOrder, setDeliveredOrder] = useState(null);
   useEffect(() => {
+    if (!seller?._id) return;
     dispatch(getAllOrdersOfShop(seller?._id));
     dispatch(getAllProductsShop(seller?._id));
     const orderData =
       orders && orders.filter((item) => item.status === "Delivered");
     setDeliveredOrder(orderData);
-  }, []);
+  }, [dispatch, seller?._id, orders]);
 
-  const availableBalance = seller?.availableBalance.toFixed(2);
+  const availableBalance = seller?.availableBalance?.toFixed(2) ?? "0.00";
 
   const columns = [
     { field: "id", headerName: "Order ID", flex: 0.7 },

@@ -55,7 +55,7 @@ const DashboardHeader = () => {
               />
             </Link>
             {seller && (
-              <Link to={`/shop/${seller._id}`} className="800px:block hidden">
+              <Link to={`/shop/${seller?._id}`} className="800px:block hidden">
                 <img
                   src={`${seller.avatar?.url}`}
                   className="w-[50px] h-[50px] rounded-full object-cover"

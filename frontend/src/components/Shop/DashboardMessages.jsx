@@ -36,11 +36,12 @@ const DashBoardMessages = () => {
   }, []);
   useEffect(() => {
     arivalMessage &&
-      currentChat.members.includes(arivalMessage.sender) &&
+      currentChat?.members?.includes(arivalMessage.sender) &&
       setMessages((prev) => [...prev, arivalMessage]);
   }, [arivalMessage, currentChat]);
 
   useEffect(() => {
+    if (!seller?._id) return;
     const getConversation = async () => {
       try {
         const response = await axios.get(
@@ -56,10 +57,11 @@ const DashBoardMessages = () => {
       }
     };
     getConversation();
-  }, [seller, messages]);
+  }, [seller?._id, messages]);
   useEffect(() => {
     if (seller) {
-      const sellerId = seller._id;
+      const sellerId = seller?._id;
+      if (!sellerId) return;
       socketId.emit("addUser", sellerId);
       socketId.on("getUsers", (data) => {
         setOnlineUsers(data);
@@ -82,7 +84,7 @@ const DashBoardMessages = () => {
     getMessages();
   }, [currentChat]);
   const onLineCheck = (chat) => {
-    const chatMembers = chat.members.find((member) => member !== seller._id);
+    const chatMembers = chat.members.find((member) => member !== seller?._id);
     const online = onlineUsers.find((user) => user.userId === chatMembers);
 
     return online ? true : false;
@@ -94,15 +96,15 @@ const DashBoardMessages = () => {
   const sendMessageHandler = async (e) => {
     e.preventDefault();
     const message = {
-      sender: seller._id,
+      sender: seller?._id,
       text: newmessage,
       conversationId: currentChat?._id,
     };
-    const reciverId = currentChat.members.find(
-      (member) => member.id !== seller._id
+    const reciverId = currentChat?.members?.find(
+      (member) => member.id !== seller?._id
     );
     socketId.emit("sendMessage", {
-      senderId: seller._id,
+      senderId: seller?._id,
       reciverId,
       text: newmessage,
     });
@@ -125,12 +127,12 @@ const DashBoardMessages = () => {
   const updateLastMessage = async () => {
     socketId.emit("updateLastMessage", {
       lastMessage: newmessage,
-      lastMessageId: seller._id,
+      lastMessageId: seller?._id,
     });
     axios
-      .put(`${server}/conversation/update-last-message/${currentChat._id}`, {
+      .put(`${server}/conversation/update-last-message/${currentChat?._id}`, {
         lastMessage: newmessage,
-        lastMessageId: seller._id,
+        lastMessageId: seller?._id,
       })
       .then((res) => {
         setNewMessage("");
@@ -151,11 +153,11 @@ const DashBoardMessages = () => {
     reader.readAsDataURL(e.target.files[0]);
   };
   const imageSendingHandler = async (imageData) => {
-    const receiverId = currentChat.members.find(
-      (member) => member !== seller._id
+    const receiverId = currentChat?.members?.find(
+      (member) => member !== seller?._id
     );
     socketId.emit("sendMessage", {
-      senderId: seller._id,
+      senderId: seller?._id,
       receiverId,
       images: imageData,
     });
@@ -163,8 +165,8 @@ const DashBoardMessages = () => {
     try {
       await axios
         .post(`${server}/message/create-new-message`, {
-          sender: seller._id,
-          conversationId: currentChat._id,
+          sender: seller?._id,
+          conversationId: currentChat?._id,
           images: imageData,
         })
         .then((res) => {
@@ -213,7 +215,7 @@ const DashBoardMessages = () => {
         <SellerInbox
           setOpen={setOpen}
           messages={messages}
-          sellerId={seller._id}
+          sellerId={seller?._id}
           newmessage={newmessage}
           setNewMessage={setNewMessage}
           scrollRef={scrollRef}

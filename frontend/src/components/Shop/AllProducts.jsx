@@ -11,8 +11,9 @@ const AllProducts = () => {
   const { seller } = useSelector((state) => state.seller);
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getAllProductsShop(seller._id));
-  }, [dispatch]);
+    if (!seller?._id) return;
+    dispatch(getAllProductsShop(seller?._id));
+  }, [dispatch, seller?._id]);
   const handleDelete = (id) => {
     dispatch(deleteProduct(id));
     window.location.reload();

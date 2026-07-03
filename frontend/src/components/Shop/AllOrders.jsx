@@ -11,8 +11,9 @@ const AllOrders = () => {
   const { seller } = useSelector((state) => state.seller);
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getAllOrdersOfShop(seller._id));
-  }, [dispatch]);
+    if (!seller?._id) return;
+    dispatch(getAllOrdersOfShop(seller?._id));
+  }, [dispatch, seller?._id]);
 
   const columns = [
     { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },

@@ -2,7 +2,7 @@ import { createReducer } from "@reduxjs/toolkit";
 
 const initialState = {
   isSeller: false,
-  isLoading: false,
+  isLoading: true,
   error: null,
   seller: null,
   sellers: [],
@@ -22,6 +22,7 @@ export const sellerReducer = createReducer(initialState, (builder) => {
       state.isLoading = false;
       state.error = action.payload;
       state.isSeller = false;
+      state.seller = null;
     })
     //get all sellers Admin
     .addCase("getAllSellerRequest", (state) => {
@@ -35,6 +36,7 @@ export const sellerReducer = createReducer(initialState, (builder) => {
       state.isLoading = false;
       state.error = action.payload;
       state.isSeller = false;
+      state.seller = null;
     })
     .addCase("clearErrors", (state) => {
       state.error = null;

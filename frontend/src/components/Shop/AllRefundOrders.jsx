@@ -11,8 +11,9 @@ const AllRefundOrders = () => {
   const { seller } = useSelector((state) => state.seller);
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getAllOrdersOfShop(seller._id));
-  }, [dispatch, seller._id]);
+    if (!seller?._id) return;
+    dispatch(getAllOrdersOfShop(seller?._id));
+  }, [dispatch, seller?._id]);
   const refundOrders =
     orders && orders.filter((order) => order.status === "Processing refund");
   const columns = [

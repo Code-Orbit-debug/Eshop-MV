@@ -25,8 +25,9 @@ const WithDrawMoney = () => {
     bankAddress: "",
   });
   useEffect(() => {
-    dispatch(getAllOrdersOfShop(seller._id));
-  }, []);
+    if (!seller?._id) return;
+    dispatch(getAllOrdersOfShop(seller?._id));
+  }, [dispatch, seller?._id]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const withdrawMethod = {
