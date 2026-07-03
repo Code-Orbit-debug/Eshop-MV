@@ -19,20 +19,26 @@ router.post("/create-user", async (req, res, next) => {
     if (!name || !email || !password || !avatar) {
       return next(new ErrorHandler("All fields are required", 400));
     }
-    const userEmail = await User.findOne({ email });
 
+    const userEmail = await User.findOne({ email });
     if (userEmail) {
       return next(new ErrorHandler("User already exists", 400));
     }
 
-    const myCloud = await cloudinary.uploader.upload(avatar, {
-      folder: "avatars",
-    });
+    // 🔥 MOVE THIS AFTER CHECKS (important)
+    let myCloud;
+    try {
+      myCloud = await cloudinary.uploader.upload(avatar, {
+        folder: "avatars",
+      });
+    } catch (err) {
+      return next(new ErrorHandler("Image upload failed", 500));
+    }
 
     const user = {
-      name: name,
-      email: email,
-      password: password,
+      name,
+      email,
+      password,
       avatar: {
         public_id: myCloud.public_id,
         url: myCloud.secure_url,
@@ -42,21 +48,19 @@ router.post("/create-user", async (req, res, next) => {
     const activationToken = createActivationToken(user);
 
     const activationUrl = `https://eshop-mv.vercel.app/activation/${activationToken}`;
-    try {
-      await sendMail({
-        email: user.email,
-        subject: "Activate Your Account!",
-        message: `Hello!\n Dear ${user.name}\n Please click on the link below to activate your account \n${activationUrl}`,
-      });
-      res.status(201).json({
-        success: true,
-        message: `Please check your email:-${user.email} to activate your account!`,
-      });
-    } catch (error) {
-      next(new ErrorHandler(error.message, 500));
-    }
+
+    await sendMail({
+      email: user.email,
+      subject: "Activate Your Account!",
+      message: `Hello ${user.name}, activate here: ${activationUrl}`,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: `Check email: ${user.email}`,
+    });
   } catch (error) {
-    next(new ErrorHandler(error.message, 400));
+    next(new ErrorHandler(error.message, 500));
   }
 });
 //create activation Token (Function)

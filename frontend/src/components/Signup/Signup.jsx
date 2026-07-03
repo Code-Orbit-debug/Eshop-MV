@@ -15,14 +15,49 @@ const SignUp = () => {
   const [avatar, setAvatar] = useState(null);
   //Handle the file Input Change
   const handleFileInputChange = (e) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (reader.readyState === 2) {
-        setAvatar(reader.result);
-      }
+  const file = e.target.files[0];
+
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = (event) => {
+    const img = new Image();
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+
+      const MAX_WIDTH = 500;
+
+      const scale = MAX_WIDTH / img.width;
+
+      canvas.width = MAX_WIDTH;
+      canvas.height = img.height * scale;
+
+      const ctx = canvas.getContext("2d");
+
+      ctx.drawImage(
+        img,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+
+      // compress image
+      const compressedImage = canvas.toDataURL(
+        "image/jpeg",
+        0.7
+      );
+
+      setAvatar(compressedImage);
     };
-    reader.readAsDataURL(e.target.files[0]);
+
+    img.src = event.target.result;
   };
+
+  reader.readAsDataURL(file);
+};
   // Handle form Submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -158,7 +193,7 @@ const SignUp = () => {
                     type="file"
                     name="avatar"
                     id="file-input"
-                    accept=".jpg,.png,.gif,.pdf"
+                    accept="image/*"
                     onChange={handleFileInputChange}
                     className="sr-only"
                     // Hide Class
