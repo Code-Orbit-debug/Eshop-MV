@@ -2,7 +2,7 @@ const nodemailer = require("nodemailer");
 const Brevo = require("@getbrevo/brevo");
 
 // =======================
-// Brevo Email Service
+// BREVO EMAIL SERVICE
 // =======================
 const sendViaBrevo = async ({ email, subject, message }) => {
   try {
@@ -20,12 +20,15 @@ const sendViaBrevo = async ({ email, subject, message }) => {
 
     console.log("[Brevo] Sending email to:", email);
 
-    // ✅ Correct instance creation
+    // ✅ Correct instance (works with current SDK)
     const apiInstance = new Brevo.TransactionalEmailsApi();
 
-    // ✅ Correct API key setup (NEW SDK STYLE)
-    apiInstance.apiClient.authentications["apiKey"].apiKey =
-      apiKey;
+    // ✅ Correct auth method (stable approach)
+    apiInstance.authentications = {
+      apiKey: {
+        apiKey: apiKey,
+      },
+    };
 
     const sendSmtpEmail = new Brevo.SendSmtpEmail();
 
@@ -46,7 +49,11 @@ const sendViaBrevo = async ({ email, subject, message }) => {
       email: senderEmail,
     };
 
-    sendSmtpEmail.to = [{ email }];
+    sendSmtpEmail.to = [
+      {
+        email: email,
+      },
+    ];
 
     sendSmtpEmail.replyTo = {
       email: senderEmail,
@@ -57,6 +64,7 @@ const sendViaBrevo = async ({ email, subject, message }) => {
     );
 
     console.log("[Brevo] Email sent successfully");
+
     return response;
   } catch (error) {
     console.log(
@@ -64,12 +72,13 @@ const sendViaBrevo = async ({ email, subject, message }) => {
       error.response?.text || error.message
     );
 
-    throw new Error(error.message || "Brevo failed");
+    // ❗ Don't crash signup
+    return null;
   }
 };
 
 // =======================
-// SMTP fallback
+// SMTP FALLBACK
 // =======================
 const sendViaSmtp = async ({ email, subject, message }) => {
   try {
@@ -106,33 +115,33 @@ const sendViaSmtp = async ({ email, subject, message }) => {
     console.log("[SMTP] Email sent successfully");
   } catch (error) {
     console.log("[SMTP Error]", error.message);
-    throw new Error(error.message || "SMTP failed");
   }
 };
 
 // =======================
-// Main handler
+// MAIN FUNCTION
 // =======================
 const sendMail = async (options) => {
   try {
-    // Prefer Brevo in production
+    // Prefer Brevo if available
     if (process.env.BREVO_API_KEY) {
-      return await sendViaBrevo(options);
+      await sendViaBrevo(options);
+      return;
     }
 
-    // Fallback SMTP
+    // fallback SMTP
     if (
       process.env.SMTP_HOST &&
       process.env.SMTP_MAIL &&
       process.env.SMTP_PASSWORD
     ) {
-      return await sendViaSmtp(options);
+      await sendViaSmtp(options);
+      return;
     }
 
-    throw new Error("No email service configured");
+    console.log("[sendMail] No email service configured");
   } catch (error) {
-    console.log("[sendMail] Final Error:", error.message);
-    throw error;
+    console.log("[sendMail Error]", error.message);
   }
 };
 
