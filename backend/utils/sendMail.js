@@ -1,109 +1,98 @@
 const nodemailer = require("nodemailer");
-const Brevo = require("@getbrevo/brevo");
 
 // =======================
-// BREVO EMAIL SERVICE
+// RESEND EMAIL SERVICE
 // =======================
-const sendViaBrevo = async ({ email, subject, message }) => {
+
+const sendViaResend = async ({
+  email,
+  subject,
+  message,
+}) => {
   try {
-    const apiKey = process.env.BREVO_API_KEY;
+    const apiKey = process.env.RESEND_API_KEY;
 
-    if (!apiKey) {
-      throw new Error("BREVO_API_KEY is missing");
+    const from =
+      process.env.RESEND_FROM ||
+      process.env.SMTP_MAIL;
+
+    if (!apiKey || !from) {
+      throw new Error(
+        "RESEND_API_KEY and RESEND_FROM are required"
+      );
     }
 
-    const senderEmail =
-      process.env.BREVO_SENDER_EMAIL || process.env.SMTP_MAIL;
-
-    const senderName =
-      process.env.BREVO_SENDER_NAME || "Eshop-MV";
-
-    console.log("[Brevo] Sending email to:", email);
-
-    // ✅ Correct instance (works with current SDK)
-    const apiInstance = new Brevo.TransactionalEmailsApi();
-
-    // ✅ Correct auth method (stable approach)
-    apiInstance.authentications = {
-      apiKey: {
-        apiKey: apiKey,
-      },
-    };
-
-    const sendSmtpEmail = new Brevo.SendSmtpEmail();
-
-    sendSmtpEmail.subject = subject;
-
-    sendSmtpEmail.htmlContent = `
-      <html>
-        <body>
-          ${message.replace(/\n/g, "<br>")}
-        </body>
-      </html>
-    `;
-
-    sendSmtpEmail.textContent = message;
-
-    sendSmtpEmail.sender = {
-      name: senderName,
-      email: senderEmail,
-    };
-
-    sendSmtpEmail.to = [
-      {
-        email: email,
-      },
-    ];
-
-    sendSmtpEmail.replyTo = {
-      email: senderEmail,
-    };
-
-    const response = await apiInstance.sendTransacEmail(
-      sendSmtpEmail
+    console.log(
+      "[sendMail] Sending via Resend API to:",
+      email
     );
 
-    console.log("[Brevo] Email sent successfully");
+    const response = await fetch(
+      "https://api.resend.com/emails",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from,
+          to: [email],
+          subject,
+          text: message,
+        }),
+      }
+    );
 
-    return response;
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.message ||
+          `Resend API Error (${response.status})`
+      );
+    }
+
+    console.log(
+      "[sendMail] Resend success:",
+      data.id
+    );
+
+    return data;
   } catch (error) {
     console.log(
-      "[Brevo Error]",
-      error.response?.text || error.message
+      "[Resend Error]",
+      error.message
     );
 
-    // ❗ Don't crash signup
-    return null;
+    throw error;
   }
 };
 
 // =======================
 // SMTP FALLBACK
 // =======================
-const sendViaSmtp = async ({ email, subject, message }) => {
+
+const sendViaSmtp = async ({
+  email,
+  subject,
+  message,
+}) => {
   try {
-    const port = Number(process.env.SMTP_PORT) || 587;
-    const secure = port === 465;
+    const port =
+      Number(process.env.SMTP_PORT) || 587;
 
-    console.log(
-      `[SMTP] Sending email via ${process.env.SMTP_HOST}:${port}`
-    );
+    const transporter =
+      nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port,
+        secure: port === 465,
 
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port,
-      secure,
-
-      auth: {
-        user: process.env.SMTP_MAIL,
-        pass: process.env.SMTP_PASSWORD,
-      },
-
-      connectionTimeout: 15000,
-      socketTimeout: 15000,
-
-      ...(port === 587 && { requireTLS: true }),
-    });
+        auth: {
+          user: process.env.SMTP_MAIL,
+          pass: process.env.SMTP_PASSWORD,
+        },
+      });
 
     await transporter.sendMail({
       from: process.env.SMTP_MAIL,
@@ -112,36 +101,49 @@ const sendViaSmtp = async ({ email, subject, message }) => {
       text: message,
     });
 
-    console.log("[SMTP] Email sent successfully");
+    console.log(
+      "[sendMail] SMTP success"
+    );
   } catch (error) {
-    console.log("[SMTP Error]", error.message);
+    console.log(
+      "[SMTP Error]",
+      error.message
+    );
+
+    throw error;
   }
 };
 
 // =======================
 // MAIN FUNCTION
 // =======================
+
 const sendMail = async (options) => {
   try {
-    // Prefer Brevo if available
-    if (process.env.BREVO_API_KEY) {
-      await sendViaBrevo(options);
-      return;
+    // Prefer Resend on Railway
+    if (process.env.RESEND_API_KEY) {
+      return await sendViaResend(options);
     }
 
-    // fallback SMTP
+    // Fallback SMTP
     if (
       process.env.SMTP_HOST &&
       process.env.SMTP_MAIL &&
       process.env.SMTP_PASSWORD
     ) {
-      await sendViaSmtp(options);
-      return;
+      return await sendViaSmtp(options);
     }
 
-    console.log("[sendMail] No email service configured");
+    throw new Error(
+      "Email not configured. Add RESEND_API_KEY or SMTP credentials."
+    );
   } catch (error) {
-    console.log("[sendMail Error]", error.message);
+    console.log(
+      "[sendMail Error]",
+      error.message
+    );
+
+    throw error;
   }
 };
 
