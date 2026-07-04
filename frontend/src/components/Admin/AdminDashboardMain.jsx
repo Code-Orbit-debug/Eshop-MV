@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
 import styles from "../../styles/styles";
-import { AiOutlineMoneyCollect } from "react-icons/ai";
-import { MdBorderClear } from "react-icons/md";
+import { AiOutlineMoneyCollect, AiOutlineShopping, AiOutlineUser } from "react-icons/ai";
 import { Link } from "react-router-dom";
-import { DataGrid } from "@material-ui/data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllOrdersOfAdmin } from "../../redux/actions/order";
 import Loader from "../Layout/Loader";
@@ -12,7 +11,7 @@ import { getAllSellers } from "../../redux/actions/sellers";
 const AdminDashboardMain = () => {
   const dispatch = useDispatch();
 
-  const { adminOrders,adminOrderLoading } = useSelector((state) => state.order);
+  const { adminOrders, adminOrderLoading } = useSelector((state) => state.order);
   const { sellers } = useSelector((state) => state.seller);
 
   useEffect(() => {
@@ -20,24 +19,18 @@ const AdminDashboardMain = () => {
     dispatch(getAllSellers());
   }, [dispatch]);
 
-   const adminEarning = adminOrders && adminOrders.reduce((acc,item) => acc + item.totalPrice * .10, 0);
-
-
-   const adminBalance = adminEarning?.toFixed(2);
+  const adminEarning = adminOrders && adminOrders.reduce((acc, item) => acc + item.totalPrice * .10, 0);
+  const adminBalance = adminEarning?.toFixed(2);
 
   const columns = [
     { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
-
     {
       field: "status",
       headerName: "Status",
       minWidth: 130,
       flex: 0.7,
-      cellClassName: (params) => {
-        return params.getValue(params.id, "status") === "Delivered"
-          ? "greenColor"
-          : "redColor";
-      },
+      cellClassName: (params) =>
+        params.row.status === "Delivered" ? "greenColor" : "redColor",
     },
     {
       field: "itemsQty",
@@ -46,7 +39,6 @@ const AdminDashboardMain = () => {
       minWidth: 130,
       flex: 0.7,
     },
-
     {
       field: "total",
       headerName: "Total",
@@ -65,91 +57,104 @@ const AdminDashboardMain = () => {
 
   const row = [];
   adminOrders &&
-  adminOrders.forEach((item) => {
+    adminOrders.forEach((item) => {
       row.push({
         id: item._id,
         itemsQty: item?.cart?.reduce((acc, item) => acc + item.qty, 0),
-        total: item?.totalPrice + " $",
+        total: "$" + item?.totalPrice,
         status: item?.status,
-        createdAt: item?.createdAt.slice(0,10),
+        createdAt: item?.createdAt.slice(0, 10),
       });
     });
 
   return (
-   <>
-    {
-      adminOrderLoading ? (
+    <>
+      {adminOrderLoading ? (
         <Loader />
       ) : (
-        <div className="w-full p-4">
-        <h3 className="text-[22px] font-Poppins pb-2">Overview</h3>
-        <div className="w-full block 800px:flex items-center justify-between">
-          <div className="w-full mb-4 800px:w-[30%] min-h-[20vh] bg-white shadow rounded px-2 py-5">
-            <div className="flex items-center">
-              <AiOutlineMoneyCollect
-                size={30}
-                className="mr-2"
-                fill="#00000085"
-              />
-              <h3
-                className={`${styles.productTitle} !text-[18px] leading-5 !font-[400] text-[#00000085]`}
-              >
-                Total Earning
-              </h3>
+        <div className="w-full p-6">
+          <h3 className="text-[28px] font-bold font-Poppins pb-6 text-gray-800">Dashboard Overview</h3>
+          
+          {/* Stats Cards */}
+          <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            {/* Total Earnings Card */}
+            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-blue-100 text-sm font-medium mb-1">Total Earnings</p>
+                  <h3 className="text-3xl font-bold">${adminBalance}</h3>
+                  <p className="text-blue-100 text-xs mt-2">10% commission from all orders</p>
+                </div>
+                <div className="bg-white/20 p-4 rounded-xl">
+                  <AiOutlineMoneyCollect size={32} />
+                </div>
+              </div>
             </div>
-            <h5 className="pt-2 pl-[36px] text-[22px] font-[500]">$ {adminBalance}</h5>
+
+            {/* All Sellers Card */}
+            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-purple-100 text-sm font-medium mb-1">Total Sellers</p>
+                  <h3 className="text-3xl font-bold">{sellers && sellers.length}</h3>
+                  <Link to="/admin-sellers" className="text-purple-100 text-xs mt-2 inline-block hover:text-white transition-colors">
+                    View all sellers →
+                  </Link>
+                </div>
+                <div className="bg-white/20 p-4 rounded-xl">
+                  <AiOutlineUser size={32} />
+                </div>
+              </div>
+            </div>
+
+            {/* All Orders Card */}
+            <div className="bg-gradient-to-br from-pink-500 to-pink-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-pink-100 text-sm font-medium mb-1">Total Orders</p>
+                  <h3 className="text-3xl font-bold">{adminOrders && adminOrders.length}</h3>
+                  <Link to="/admin-orders" className="text-pink-100 text-xs mt-2 inline-block hover:text-white transition-colors">
+                    View all orders →
+                  </Link>
+                </div>
+                <div className="bg-white/20 p-4 rounded-xl">
+                  <AiOutlineShopping size={32} />
+                </div>
+              </div>
+            </div>
           </div>
-  
-          <div className="w-full mb-4 800px:w-[30%] min-h-[20vh] bg-white shadow rounded px-2 py-5">
-            <div className="flex items-center">
-              <MdBorderClear size={30} className="mr-2" fill="#00000085" />
-              <h3
-                className={`${styles.productTitle} !text-[18px] leading-5 !font-[400] text-[#00000085]`}
-              >
-                All Sellers
-              </h3>
-            </div>
-            <h5 className="pt-2 pl-[36px] text-[22px] font-[500]">{sellers && sellers.length}</h5>
-            <Link to="/admin-sellers">
-              <h5 className="pt-4 pl-2 text-[#077f9c]">View Sellers</h5>
-            </Link>
-          </div>
-  
-          <div className="w-full mb-4 800px:w-[30%] min-h-[20vh] bg-white shadow rounded px-2 py-5">
-            <div className="flex items-center">
-              <AiOutlineMoneyCollect
-                size={30}
-                className="mr-2"
-                fill="#00000085"
+
+          {/* Latest Orders Table */}
+          <div className="bg-white rounded-2xl shadow-lg p-6">
+            <h3 className="text-[22px] font-bold font-Poppins pb-4 text-gray-800">Latest Orders</h3>
+            <div className="w-full min-h-[45vh]">
+              <DataGrid
+                rows={row}
+                columns={columns}
+                pageSize={5}
+                disableSelectionOnClick
+                autoHeight
+                sx={{
+                  '& .MuiDataGrid-root': {
+                    border: 'none',
+                  },
+                  '& .MuiDataGrid-cell': {
+                    borderBottom: '1px solid #f3f4f6',
+                  },
+                  '& .MuiDataGrid-columnHeaders': {
+                    backgroundColor: '#f9fafb',
+                    borderBottom: '2px solid #e5e7eb',
+                  },
+                  '& .MuiDataGrid-columnHeaderTitle': {
+                    fontWeight: 600,
+                  },
+                }}
               />
-              <h3
-                className={`${styles.productTitle} !text-[18px] leading-5 !font-[400] text-[#00000085]`}
-              >
-                All Orders
-              </h3>
             </div>
-            <h5 className="pt-2 pl-[36px] text-[22px] font-[500]">{adminOrders && adminOrders.length}</h5>
-            <Link to="/admin-orders">
-              <h5 className="pt-4 pl-2 text-[#077f9c]">View Orders</h5>
-            </Link>
           </div>
         </div>
-  
-        <br />
-        <h3 className="text-[22px] font-Poppins pb-2">Latest Orders</h3>
-        <div className="w-full min-h-[45vh] bg-white rounded">
-          <DataGrid
-            rows={row}
-            columns={columns}
-            pageSize={4}
-            disableSelectionOnClick
-            autoHeight
-          />
-        </div>
-      </div>
-      )
-    }
-   </>
+      )}
+    </>
   );
 };
 
