@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AiOutlineArrowRight, AiOutlineMoneyCollect } from "react-icons/ai";
+import { AiOutlineArrowRight, AiOutlineMoneyCollect, AiOutlineShopping, AiOutlineProduct } from "react-icons/ai";
 import styles from "../../styles/styles";
 import { Link } from "react-router-dom";
 import { MdBorderClear } from "react-icons/md";
@@ -15,6 +15,7 @@ const DashBoardHero = () => {
   const { seller } = useSelector((state) => state.seller);
   const { products } = useSelector((state) => state.products);
   const [deliveredOrder, setDeliveredOrder] = useState(null);
+
   useEffect(() => {
     if (!seller?._id) return;
     dispatch(getAllOrdersOfShop(seller?._id));
@@ -28,7 +29,6 @@ const DashBoardHero = () => {
 
   const columns = [
     { field: "id", headerName: "Order ID", flex: 0.7 },
-
     {
       field: "status",
       headerName: "Status",
@@ -42,14 +42,12 @@ const DashBoardHero = () => {
       type: "number",
       flex: 0.7,
     },
-
     {
       field: "total",
       headerName: "Total",
       type: "number",
       flex: 0.8,
     },
-
     {
       field: " ",
       flex: 1,
@@ -76,82 +74,94 @@ const DashBoardHero = () => {
       row.push({
         id: item._id,
         itemsQty: item.cart.reduce((acc, item) => acc + item.qty, 0),
-        total: "US$ " + item.totalPrice,
+        total: "$" + item.totalPrice,
         status: item.status,
       });
     });
+
   return (
-    <div className="w-full p-8">
-      <h3 className="text-[22px] font-Poppins pb-2">Overview</h3>
-      <div className="w-full block 800px:flex items-center justify-between">
-        <div className="w-full mb-4 800px:w-[30%] min-h-[20vh] bg-white shadow rounded px-2 py-5">
-          <div className="flex items-center">
-            <AiOutlineMoneyCollect
-              size={30}
-              className="mr-2"
-              fill="#00000085"
-            />
-            <h3
-              className={`${styles.productTitle} !text-[18px] leading-5 !font-[400] text-[#00000085]`}
-            >
-              Account Balance{" "}
-              <span className="text-[16px]">(with 10% service charge)</span>
-            </h3>
+    <div className="w-full p-6">
+      <h3 className="text-[28px] font-bold font-Poppins pb-6 text-gray-800">Seller Dashboard</h3>
+      
+      {/* Stats Cards */}
+      <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {/* Account Balance Card */}
+        <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-emerald-100 text-sm font-medium mb-1">Available Balance</p>
+              <h3 className="text-3xl font-bold">${availableBalance}</h3>
+              <p className="text-emerald-100 text-xs mt-2">After 10% service charge</p>
+              <Link to="/dashboard-withdraw-money" className="text-emerald-100 text-xs mt-3 inline-block hover:text-white transition-colors font-medium">
+                Withdraw Money →
+              </Link>
+            </div>
+            <div className="bg-white/20 p-4 rounded-xl">
+              <AiOutlineMoneyCollect size={32} />
+            </div>
           </div>
-          <h5 className="pt-2 pl-[36px] text-[22px] font-[500]">
-            ${availableBalance}
-          </h5>
-          <Link to="/dashboard-withdraw-money">
-            <h5 className="pt-4 pl-[2] text-[#077f9c]">Withdraw Money</h5>
-          </Link>
         </div>
-        <div className="w-full mb-4 800px:w-[30%] min-h-[20vh] bg-white shadow rounded px-2 py-5">
-          <div className="flex items-center">
-            <MdBorderClear size={30} className="mr-2" fill="#00000085" />
-            <h3
-              className={`${styles.productTitle} !text-[18px] leading-5 !font-[400] text-[#00000085]`}
-            >
-              All Orders
-            </h3>
+
+        {/* All Orders Card */}
+        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-blue-100 text-sm font-medium mb-1">Total Orders</p>
+              <h3 className="text-3xl font-bold">{orders && orders.length}</h3>
+              <Link to="/dashboard-orders" className="text-blue-100 text-xs mt-3 inline-block hover:text-white transition-colors font-medium">
+                View Orders →
+              </Link>
+            </div>
+            <div className="bg-white/20 p-4 rounded-xl">
+              <AiOutlineShopping size={32} />
+            </div>
           </div>
-          <h5 className="pt-2 pl-[36px] text-[22px] font-[500]">
-            {orders && orders.length}
-          </h5>
-          <Link to="/dashboard-orders">
-            <h5 className="pt-4 pl-[2] text-[#077f9c]">View Orders</h5>
-          </Link>
         </div>
-        <div className="w-full mb-4 800px:w-[30%] min-h-[20vh] bg-white shadow rounded px-2 py-5">
-          <div className="flex items-center">
-            <AiOutlineMoneyCollect
-              size={30}
-              className="mr-2"
-              fill="#00000085"
-            />
-            <h3
-              className={`${styles.productTitle} !text-[18px] leading-5 !font-[400] text-[#00000085]`}
-            >
-              All Products
-            </h3>
+
+        {/* All Products Card */}
+        <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-orange-100 text-sm font-medium mb-1">Total Products</p>
+              <h3 className="text-3xl font-bold">{products && products.length}</h3>
+              <Link to="/dashboard-products" className="text-orange-100 text-xs mt-3 inline-block hover:text-white transition-colors font-medium">
+                View Products →
+              </Link>
+            </div>
+            <div className="bg-white/20 p-4 rounded-xl">
+              <AiOutlineProduct size={32} />
+            </div>
           </div>
-          <h5 className="pt-2 pl-[36px] text-[22px] font-[500]">
-            {products && products.length}
-          </h5>
-          <Link to="/dashboard-products">
-            <h5 className="pt-4 pl-[2] text-[#077f9c]">View Products</h5>
-          </Link>
         </div>
       </div>
-      <br />
-      <h3 className="text-[22px] font-Poppins  pb-2">Latest Orders</h3>
-      <div className="w-full min-h-[45vh] bg-white rounded">
-        <DataGrid
-          rows={row}
-          columns={columns}
-          pageSize={10}
-          disableSelectionOnClick
-          autoHeight
-        />
+
+      {/* Latest Orders Table */}
+      <div className="bg-white rounded-2xl shadow-lg p-6">
+        <h3 className="text-[22px] font-bold font-Poppins pb-4 text-gray-800">Latest Orders</h3>
+        <div className="w-full min-h-[45vh]">
+          <DataGrid
+            rows={row}
+            columns={columns}
+            pageSize={5}
+            disableSelectionOnClick
+            autoHeight
+            sx={{
+              '& .MuiDataGrid-root': {
+                border: 'none',
+              },
+              '& .MuiDataGrid-cell': {
+                borderBottom: '1px solid #f3f4f6',
+              },
+              '& .MuiDataGrid-columnHeaders': {
+                backgroundColor: '#f9fafb',
+                borderBottom: '2px solid #e5e7eb',
+              },
+              '& .MuiDataGrid-columnHeaderTitle': {
+                fontWeight: 600,
+              },
+            }}
+          />
+        </div>
       </div>
     </div>
   );
