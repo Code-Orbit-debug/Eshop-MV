@@ -252,7 +252,7 @@ const App = () => {
             }
           />
           <Route
-            path="/dashboard-coupons"
+            path="/dashboard-coupouns"
             element={
               <SellerProtectedRoute>
                 <ShopAllCoupouns />
