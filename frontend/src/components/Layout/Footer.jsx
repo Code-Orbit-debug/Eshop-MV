@@ -44,12 +44,61 @@ const Footer = () => {
           />
           <br />
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-          <div className="flex items-center gap-2 p-1 mt-[15px] ">
-            <FaTwitter size={20} className="ml-4 cursor-pointer" />
-            <FaGithub size={20} className="ml-4 cursor-pointer" />
-            <FaInstagram size={20} className="ml-4 cursor-pointer" />
-            <FaLinkedin size={20} className="ml-4 cursor-pointer" />
-            <FaFacebook size={20} className="ml-4 cursor-pointer" />
+          <div className="flex items-center gap-2 p-1 mt-[15px]">
+            <a
+              href="https://twitter.com/RihaShehzadi"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <FaTwitter
+                size={20}
+                className="ml-4 cursor-pointer hover:text-teal-400"
+              />
+            </a>
+
+            <a
+              href="https://github.com/codingwithriha"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <FaGithub
+                size={20}
+                className="ml-4 cursor-pointer hover:text-teal-400"
+              />
+            </a>
+
+            <a
+              href="https://instagram.com/riha_shahzadi"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <FaInstagram
+                size={20}
+                className="ml-4 cursor-pointer hover:text-teal-400"
+              />
+            </a>
+
+            <a
+              href="https://linkedin.com/in/riha-shahzadi"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <FaLinkedin
+                size={20}
+                className="ml-4 cursor-pointer hover:text-teal-400"
+              />
+            </a>
+
+            <a
+              href="https://facebook.com/100077588075894"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <FaFacebook
+                size={20}
+                className="ml-4 cursor-pointer hover:text-teal-400"
+              />
+            </a>
           </div>
         </ul>
         <ul className="text-center sm:text-start ">
@@ -108,7 +157,9 @@ const Footer = () => {
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10
          text-center pt-2 text-gray-400 text-sm pb-8"
       >
-        <span>© Codingwithriha 2026. All rights reserved.</span>
+        <span>
+          © Codingwithriha {new Date().getFullYear()}. All rights reserved.
+        </span>
         <span>Term Privacy. and Policy</span>
         <div className="sm:block flex items-center justify-center w-full">
           <img
