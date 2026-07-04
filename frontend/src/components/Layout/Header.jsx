@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "../../styles/styles";
 import { Link } from "react-router-dom";
 import { categoriesData } from "../../static/data";
@@ -6,6 +6,7 @@ import {
   AiOutlineHeart,
   AiOutlineSearch,
   AiOutlineShoppingCart,
+  AiOutlineUser,
 } from "react-icons/ai";
 import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
 import { BiMenuAltLeft } from "react-icons/bi";
@@ -42,13 +43,17 @@ const Header = ({ activeHeading }) => {
       );
     setSearchData(filterProductData);
   };
-  window.addEventListener("scroll", () => {
-    if (window.scrollY > 70) {
-      setActive(true);
-    } else {
-      setActive(false);
-    }
-  });
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 70) {
+        setActive(true);
+      } else {
+        setActive(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   const handleSuggestionClick = () => {
     setSearchTerm("");
     setSearchData([]);
@@ -57,46 +62,48 @@ const Header = ({ activeHeading }) => {
   return (
     <>
       <div className={`${styles.section}`}>
-        <div className="hidden 800px:h-[50px] 800px:my-[20px] 800px:flex items-center justify-between">
+        <div className="hidden 800px:h-[60px] 800px:my-[20px] 800px:flex items-center justify-between">
           <div>
             <Link to="/">
               <img
                 src="https://shopo.quomodothemes.website/assets/images/logo.svg"
                 alt="home-logo"
-                className="mt-2 cursor-pointer"
+                className="h-[45px] cursor-pointer hover:scale-105 transition-transform"
               />
             </Link>
           </div>
           {/* Search Box Working */}
-          <div className="w-[50%] relative">
-            <input
-              type="text"
-              placeholder="Search Your Accessries..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-              className="h-[40px] w-full px-2 border-[#3957db] border-[2px] rounded-md"
-            />
-            <AiOutlineSearch
-              size={30}
-              className="absolute right-2 top-1.5 cursor-pointer"
-            />
+          <div className="w-[45%] relative">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                className="h-[45px] w-full px-4 pl-12 border-2 border-gray-200 rounded-full focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+              />
+              <AiOutlineSearch
+                size={20}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+              />
+            </div>
             {searchData && searchData.length !== 0 ? (
-              <div className="absolute min-h-[30vh] bg-slate-50 shadow-sm-2 z-[9] p-4">
+              <div className="absolute min-h-[30vh] bg-white shadow-xl rounded-lg z-[9] p-4 mt-2 border border-gray-100">
                 {searchData &&
                   searchData.map((i, index) => {
-                    console.log(i);
                     return (
                       <Link
                         to={`/product/${i._id}`}
                         key={index}
                         onClick={handleSuggestionClick}
                       >
-                        <div className="w-full flex  items-start py-3 ">
+                        <div className="w-full flex items-center py-3 hover:bg-gray-50 rounded-lg px-2 transition-colors">
                           <img
                             src={i.images[0].url}
-                            className="w-[40px] h-[40px] mr-[10px] "
+                            className="w-[50px] h-[50px] rounded-lg object-cover mr-4"
+                            alt={i.name}
                           />
-                          <h1>{i.name}</h1>
+                          <h1 className="text-gray-700 font-medium">{i.name}</h1>
                         </div>
                       </Link>
                     );
@@ -106,11 +113,11 @@ const Header = ({ activeHeading }) => {
             {/* ending searchBox styling */}
           </div>
           {/* Styling for seller button */}
-          <div className={`${styles.button}`}>
+          <div className={`${styles.button} !bg-gradient-to-r !from-blue-600 !to-purple-600 !rounded-full !h-[45px] !px-6 hover:shadow-lg hover:shadow-blue-500/30 transition-all`}>
             <Link to={`${isSeller ? "/dashboard" : "/shop-create"}`}>
-              <h1 className="text-white flex items-center">
+              <h1 className="text-white flex items-center font-semibold">
                 {isSeller ? "DASHBOARD" : "CREATE SHOP"}
-                <IoIosArrowForward className="ml-1" />
+                <IoIosArrowForward className="ml-2" />
               </h1>
             </Link>
           </div>
@@ -120,8 +127,8 @@ const Header = ({ activeHeading }) => {
       {/* styling for fixed navbar  only for big screen*/}
       <div
         className={`${
-          active === true ? "shadow-sm fixed top-0 left-0 z-10" : null
-        } transition hidden 800px:flex items-center justify-between w-full bg-[#3321c8] h-[70px]`}
+          active === true ? "shadow-xl fixed top-0 left-0 z-50 bg-white/95 backdrop-blur-md" : null
+        } transition-all duration-300 hidden 800px:flex items-center justify-between w-full bg-gradient-to-r from-blue-700 to-purple-700 h-[70px]`}
       >
         <div
           className={`${styles.section} ${styles.normalFlex} relative justify-between`}
@@ -132,15 +139,15 @@ const Header = ({ activeHeading }) => {
               setDropDown(!dropDown);
             }}
           >
-            <div className="relative mt-[10px] h-[50px] w-[270px] hidden 1000px:block">
-              <BiMenuAltLeft className="absolute top-3 left-2" size={30} />
-              <button className="h-[100%] w-full flex justify-between items-center pl-10 bg-white text-lg font-sans font-[500] select-none rounded-t-md">
+            <div className="relative h-[50px] w-[280px] hidden 1000px:block">
+              <BiMenuAltLeft className="absolute top-3 left-2 text-white" size={30} />
+              <button className="h-[100%] w-full flex justify-between items-center pl-10 bg-white/10 text-white text-lg font-sans font-[500] select-none rounded-lg hover:bg-white/20 transition-all">
                 All Categories
               </button>
               {/* dropdown Arrow |Type| */}
               <IoIosArrowDown
                 size={20}
-                className="absolute right-2 top-4 cursor-pointer"
+                className="absolute right-2 top-4 cursor-pointer text-white"
                 onClick={() => setDropDown(!dropDown)}
               />
               {dropDown ? (
@@ -157,44 +164,51 @@ const Header = ({ activeHeading }) => {
             <Navbar active={activeHeading} />
           </div>
           {/* Speacial Icons */}
-          <div className={`${styles.normalFlex}`}>
+          <div className={`${styles.normalFlex} gap-6`}>
             {/* Wishlist Clicking */}
             <div className={`${styles.normalFlex}`}>
               <div
-                className="relative mr-[15px] cursor-pointer"
+                className="relative cursor-pointer group"
                 onClick={() => setOpenWishlist(!openWishlist)}
               >
-                <AiOutlineHeart size={30} color="rgb(255 255 255/83%)" />
-                <span className="absolute  right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4  p-0 m-0 text-white font-monospace text-center  font-[12px] leading-tight ">
-                  {wishlist && wishlist.length}
-                </span>
+                <AiOutlineHeart size={28} color="rgb(255 255 255)" className="group-hover:scale-110 transition-transform" />
+                {wishlist && wishlist.length > 0 && (
+                  <span className="absolute -top-2 -right-2 rounded-full bg-red-500 w-5 h-5 flex items-center justify-center text-white font-bold text-xs">
+                    {wishlist.length}
+                  </span>
+                )}
               </div>
             </div>
             {/* Shoping Cart clicking */}
             <div className={`${styles.normalFlex}`}>
               <div
-                className="relative mr-[15px] cursor-pointer"
+                className="relative cursor-pointer group"
                 onClick={() => setOpenCart(!openCart)}
               >
-                <AiOutlineShoppingCart size={30} color="rgb(255 255 255/83%)" />
-                <span className="absolute  right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4  p-0 m-0 text-white font-monospace text-center  font-[12px] leading-tight ">
-                  {cart && cart.length}
-                </span>
+                <AiOutlineShoppingCart size={28} color="rgb(255 255 255)" className="group-hover:scale-110 transition-transform" />
+                {cart && cart.length > 0 && (
+                  <span className="absolute -top-2 -right-2 rounded-full bg-red-500 w-5 h-5 flex items-center justify-center text-white font-bold text-xs">
+                    {cart.length}
+                  </span>
+                )}
               </div>
             </div>
             {/* Profile Picture styling */}
             <div className={`${styles.normalFlex}`}>
-              <div className="relative mr-[15px] cursor-pointer">
+              <div className="relative cursor-pointer group">
                 {isAuthenticated ? (
                   <Link to="/profile">
                     <img
-                      className="h-[35px] w-[35px] rounded-full"
+                      className="h-[40px] w-[40px] rounded-full border-2 border-white/50 hover:border-white transition-all"
                       src={`${user?.avatar?.url}`}
+                      alt="profile"
                     />
                   </Link>
                 ) : (
                   <Link to="/login">
-                    <CgProfile size={30} color="rgb(255 255 255/83%)" />
+                    <div className="h-[40px] w-[40px] rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
+                      <AiOutlineUser size={24} color="white" />
+                    </div>
                   </Link>
                 )}
               </div>
