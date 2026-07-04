@@ -5,11 +5,13 @@ import axios from "axios";
 import { server } from "../../server";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -33,24 +35,27 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-3xl font-semibold text-gray-900 text-center">
-          Login to your account
-        </h2>
+        <div className="text-center mb-8">
+          <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Welcome Back
+          </h2>
+          <p className="mt-2 text-gray-600">Sign in to continue shopping</p>
+        </div>
       </div>
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="bg-white py-10 px-8 shadow-2xl rounded-2xl sm:px-10 border border-gray-100">
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Input for Email */}
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-semibold text-gray-700 mb-2"
               >
-                Email address
+                Email Address
               </label>
-              <div className="mt-1">
+              <div className="relative">
                 <input
                   type="email"
                   name="email"
@@ -58,19 +63,21 @@ const Login = () => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  placeholder="Enter your email"
                 />
               </div>
             </div>
+
             {/* Input for Password */}
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-semibold text-gray-700 mb-2"
               >
                 Password
               </label>
-              <div className="mt-1 relative">
+              <div className="relative">
                 <input
                   type={visible ? "text" : "password"}
                   name="password"
@@ -78,24 +85,24 @@ const Login = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all pr-12"
+                  placeholder="Enter your password"
                 />
                 {/* toggle visibility password */}
-                {visible ? (
-                  <AiOutlineEye
-                    className="absolute right-2 cursor-pointer top-2"
-                    size={25}
-                    onClick={() => setVisible(false)}
-                  />
-                ) : (
-                  <AiOutlineEyeInvisible
-                    className="absolute right-2 cursor-pointer top-2"
-                    size={25}
-                    onClick={() => setVisible(true)}
-                  />
-                )}
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  onClick={() => setVisible(!visible)}
+                >
+                  {visible ? (
+                    <AiOutlineEye size={22} />
+                  ) : (
+                    <AiOutlineEyeInvisible size={22} />
+                  )}
+                </button>
               </div>
             </div>
+
             {/* Remember me  */}
             <div className="flex items-center justify-between">
               <div className="flex items-center">
@@ -107,7 +114,7 @@ const Login = () => {
                 />
                 <label
                   htmlFor="remember-me"
-                  className="ml-2 block text-sm text-gray-900"
+                  className="ml-2 block text-sm text-gray-700"
                 >
                   Remember me
                 </label>
@@ -115,26 +122,28 @@ const Login = () => {
               <div className="text-sm">
                 <a
                   href="#"
-                  className="font-medium text-blue-600 hover:text-blue-500 "
+                  className="font-medium text-blue-600 hover:text-blue-700 transition-colors"
                 >
-                  Forgot Your Password?
+                  Forgot Password?
                 </a>
               </div>
             </div>
+
             {/* Submit Button */}
             <div>
               <button
                 type="submit"
-                className="group h-[40px] relative w-full px-4 py-2 border border-transparent  text-sm font-medium flex justify-center rounded bg-blue-600 text-white hover:opacity-95"
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-lg text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:scale-[1.02]"
               >
-                Submit
+                Sign In
               </button>
             </div>
+
             {/* Link to signUp */}
-            <div className=" flex items-center w-full">
-              <h4>Not have any Account?</h4>
-              <Link to="/signup" className="text-blue-600 pl-2">
-                SignUp
+            <div className="flex items-center justify-center w-full pt-4">
+              <p className="text-gray-600">Don't have an account?</p>
+              <Link to="/signup" className="ml-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors">
+                Sign Up
               </Link>
             </div>
           </form>

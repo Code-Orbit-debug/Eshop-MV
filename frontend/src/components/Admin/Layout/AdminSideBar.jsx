@@ -8,126 +8,59 @@ import { HiOutlineUserGroup } from "react-icons/hi";
 import { FaProductHunt } from "react-icons/fa";
 import { MdEmojiEvents } from "react-icons/md";
 import { MdOutlineSettings } from "react-icons/md";
+
 const AdminSidebar = ({ active }) => {
+  const sidebarItems = [
+    { id: 1, icon: RxDashboard, label: "Dashboard", path: "/admin/dashboard" },
+    { id: 2, icon: FiShoppingBag, label: "All Orders", path: "/admin-orders" },
+    { id: 3, icon: HiOutlineUserGroup, label: "All Sellers", path: "/admin-sellers" },
+    { id: 4, icon: GrWorkshop, label: "All Users", path: "/admin-users" },
+    { id: 5, icon: FaProductHunt, label: "All Products", path: "/admin-products" },
+    { id: 6, icon: MdEmojiEvents, label: "All Events", path: "/admin-events" },
+    { id: 7, icon: CiMoneyBill, label: "Withdraw Requests", path: "/admin-withdraw-request" },
+    { id: 8, icon: MdOutlineSettings, label: "Settings", path: "/admin-settings" },
+  ];
+
   return (
-    <div className="w-full h-[89vh] bg-white shadow-sm overflow-y-scroll sticky top-0 left-0 z-10 ">
-      {/* Sidevbar Single Item */}
-      <div className="w-full flex items-center p-4">
-        <Link to={`/admin/dashboard`} className="w-full flex items-center">
-          <RxDashboard size={30} color={active == 1 ? "crimson" : "#555"} />
-          <h5
-            className={`hidden 800px:block pl-2 text-[18px] font-[400] ${
-              active == 1 ? "text-[crimson]" : "text-[#555]"
-            }`}
-          >
-            DashBoard
-          </h5>
-        </Link>
+    <div className="w-full h-[89vh] bg-gradient-to-b from-gray-50 to-white shadow-lg overflow-y-auto sticky top-0 left-0 z-10 border-r border-gray-100">
+      {/* Header */}
+      <div className="p-6 border-b border-gray-100">
+        <h3 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          Admin Portal
+        </h3>
+        <p className="text-xs text-gray-500 mt-1">Platform management</p>
       </div>
-      <div className="w-full flex items-center p-4">
-        <Link to="/admin-orders" className="w-full flex items-center">
-          <FiShoppingBag
-            size={30}
-            color={`${active === 2 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`hidden 800px:block pl-2 text-[18px] font-[400] ${
-              active === 2 ? "text-[crimson]" : "text-[#555]"
-            }`}
-          >
-            All Orders
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link to="/admin-sellers" className="w-full flex items-center">
-          <HiOutlineUserGroup
-            size={30}
-            color={`${active === 3 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`hidden 800px:block pl-2 text-[18px] font-[400] ${
-              active === 3 ? "text-[crimson]" : "text-[#555]"
-            }`}
-          >
-            All Seller
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link to="/admin-users" className="w-full flex items-center">
-          <GrWorkshop
-            size={30}
-            color={`${active === 4 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`hidden 800px:block pl-2 text-[18px] font-[400] ${
-              active === 4 ? "text-[crimson]" : "text-[#555]"
-            }`}
-          >
-            All User
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link to="/admin-products" className="w-full flex items-center">
-          <FaProductHunt
-            size={30}
-            color={`${active === 5 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`hidden 800px:block pl-2 text-[18px] font-[400] ${
-              active === 5 ? "text-[crimson]" : "text-[#555]"
-            }`}
-          >
-            All Products
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link to="/admin-events" className="w-full flex items-center">
-          <MdEmojiEvents
-            size={30}
-            color={`${active === 6 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`hidden 800px:block pl-2 text-[18px] font-[400] ${
-              active === 6 ? "text-[crimson]" : "text-[#555]"
-            }`}
-          >
-            All Events
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link to="/admin-withdraw-request" className="w-full flex items-center">
-          <CiMoneyBill
-            size={30}
-            color={`${active === 7 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`hidden 800px:block pl-2 text-[18px] font-[400] ${
-              active === 7 ? "text-[crimson]" : "text-[#555]"
-            }`}
-          >
-            Withdraw Request
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link to="/admin-settings" className="w-full flex items-center">
-          <MdOutlineSettings
-            size={30}
-            color={`${active === 8 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`hidden 800px:block pl-2 text-[18px] font-[400] ${
-              active === 8 ? "text-[crimson]" : "text-[#555]"
-            }`}
-          >
-            settings
-          </h5>
-        </Link>
+
+      {/* Sidebar Items */}
+      <div className="py-4">
+        {sidebarItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = active === item.id;
+          
+          return (
+            <Link
+              key={item.id}
+              to={item.path}
+              className={`w-full flex items-center px-6 py-3 mx-3 mb-2 rounded-xl transition-all duration-200 group ${
+                isActive
+                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md"
+                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+              }`}
+            >
+              <Icon
+                size={24}
+                className={`${isActive ? "text-white" : "text-gray-500 group-hover:text-gray-700"} transition-colors`}
+              />
+              <h5
+                className={`hidden 800px:block pl-3 text-[15px] font-medium ${
+                  isActive ? "text-white" : "text-gray-600 group-hover:text-gray-900"
+                }`}
+              >
+                {item.label}
+              </h5>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import { server } from "../../server.js";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+
 const SignUp = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -13,60 +14,62 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
   const [avatar, setAvatar] = useState(null);
+
   //Handle the file Input Change
   const handleFileInputChange = (e) => {
-  const file = e.target.files[0];
+    const file = e.target.files[0];
 
-  if (!file) return;
+    if (!file) return;
 
-  const reader = new FileReader();
+    const reader = new FileReader();
 
-  reader.onload = (event) => {
-    const img = new Image();
+    reader.onload = (event) => {
+      const img = new Image();
 
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
 
-      const MAX_WIDTH = 500;
+        const MAX_WIDTH = 500;
 
-      const scale = MAX_WIDTH / img.width;
+        const scale = MAX_WIDTH / img.width;
 
-      canvas.width = MAX_WIDTH;
-      canvas.height = img.height * scale;
+        canvas.width = MAX_WIDTH;
+        canvas.height = img.height * scale;
 
-      const ctx = canvas.getContext("2d");
+        const ctx = canvas.getContext("2d");
 
-      ctx.drawImage(
-        img,
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
+        ctx.drawImage(
+          img,
+          0,
+          0,
+          canvas.width,
+          canvas.height
+        );
 
-      // compress image
-      const compressedImage = canvas.toDataURL(
-        "image/jpeg",
-        0.7
-      );
+        // compress image
+        const compressedImage = canvas.toDataURL(
+          "image/jpeg",
+          0.7
+        );
 
-      setAvatar(compressedImage);
+        setAvatar(compressedImage);
+      };
+
+      img.src = event.target.result;
     };
 
-    img.src = event.target.result;
+    reader.readAsDataURL(file);
   };
 
-  reader.readAsDataURL(file);
-};
   // Handle form Submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-   
 
     await axios
       .post(
         `${server}/user/create-user`,
-        { name, email, password, avatar }  )
+        { name, email, password, avatar }
+      )
       .then((res) => {
         toast.success(res.data.message);
         setName("");
@@ -81,24 +84,27 @@ const SignUp = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-3xl font-semibold text-gray-900 text-center">
-          Register as a New User
-        </h2>
+        <div className="text-center mb-8">
+          <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Create Account
+          </h2>
+          <p className="mt-2 text-gray-600">Join us and start shopping today</p>
+        </div>
       </div>
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="bg-white py-10 px-8 shadow-2xl rounded-2xl sm:px-10 border border-gray-100">
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Input for name */}
             <div>
               <label
-                htmlFor="Full Name"
-                className="block text-sm font-medium text-gray-700"
+                htmlFor="name"
+                className="block text-sm font-semibold text-gray-700 mb-2"
               >
                 Full Name
               </label>
-              <div className="mt-1">
+              <div className="relative">
                 <input
                   type="text"
                   name="name"
@@ -106,19 +112,21 @@ const SignUp = () => {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  placeholder="Enter your full name"
                 />
               </div>
             </div>
+
             {/* Input for Email */}
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-semibold text-gray-700 mb-2"
               >
-                Email address
+                Email Address
               </label>
-              <div className="mt-1">
+              <div className="relative">
                 <input
                   type="email"
                   name="email"
@@ -126,19 +134,21 @@ const SignUp = () => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  placeholder="Enter your email"
                 />
               </div>
             </div>
+
             {/* Input for Password */}
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-semibold text-gray-700 mb-2"
               >
                 Password
               </label>
-              <div className="mt-1 relative">
+              <div className="relative">
                 <input
                   type={visible ? "text" : "password"}
                   name="password"
@@ -146,49 +156,52 @@ const SignUp = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all pr-12"
+                  placeholder="Create a password"
                 />
-                {/* toggle visibiltiy Password */}
-                {visible ? (
-                  <AiOutlineEye
-                    className="absolute right-2 cursor-pointer top-2"
-                    size={25}
-                    onClick={() => setVisible(false)}
-                  />
-                ) : (
-                  <AiOutlineEyeInvisible
-                    className="absolute right-2 cursor-pointer top-2"
-                    size={25}
-                    onClick={() => setVisible(true)}
-                  />
-                )}
+                {/* toggle visibility Password */}
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  onClick={() => setVisible(!visible)}
+                >
+                  {visible ? (
+                    <AiOutlineEye size={22} />
+                  ) : (
+                    <AiOutlineEyeInvisible size={22} />
+                  )}
+                </button>
               </div>
             </div>
+
             {/* Input for Avatar */}
             <div>
               <label
                 htmlFor="avatar"
-                className="text-sm block font-medium text-gray-700"
-              ></label>
-              <div className="mt-2 flex items-center">
-                <span className="inline-block h-8 w-8 rounded-full overflow-hidden">
-                  {avatar ? (
-                    <img
-                      src={avatar}
-                      alt="avatar"
-                      className="h-full w-full object-cover rounded-full"
-                    />
-                  ) : (
-                    <RxAvatar className="h-8 w-8" />
-                  )}
-                </span>
+                className="block text-sm font-semibold text-gray-700 mb-2"
+              >
+                Profile Avatar
+              </label>
+              <div className="mt-2 flex items-center gap-4">
+                <div className="relative">
+                  <span className="inline-block h-16 w-16 rounded-full overflow-hidden border-2 border-gray-200 bg-gray-50 flex items-center justify-center">
+                    {avatar ? (
+                      <img
+                        src={avatar}
+                        alt="avatar"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <RxAvatar className="h-10 w-10 text-gray-400" />
+                    )}
+                  </span>
+                </div>
                 {/* File Input for Avatar */}
                 <label
                   htmlFor="file-input"
-                  className="ml-5 flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium
-                text-gray-700 bg-white hover:bg-gray-50 "
+                  className="flex items-center px-4 py-2.5 border-2 border-dashed border-gray-300 rounded-lg text-sm font-medium text-gray-600 bg-gray-50 hover:bg-gray-100 hover:border-blue-400 cursor-pointer transition-all"
                 >
-                  <span>Upload a file</span>
+                  <span>Upload Avatar</span>
                   <input
                     type="file"
                     name="avatar"
@@ -196,25 +209,26 @@ const SignUp = () => {
                     accept="image/*"
                     onChange={handleFileInputChange}
                     className="sr-only"
-                    // Hide Class
                   />
                 </label>
               </div>
             </div>
+
             {/* Submit Button */}
             <div>
               <button
                 type="submit"
-                className="group h-[40px] relative w-full px-4 py-2 border border-transparent  text-sm font-medium flex justify-center rounded bg-blue-600 text-white hover:opacity-95"
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-lg text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:scale-[1.02]"
               >
-                Submit
+                Create Account
               </button>
             </div>
+
             {/* Link to the Login*/}
-            <div className=" flex items-center w-full">
-              <h4>Already have an Account?</h4>
-              <Link to="/login" className="text-blue-600 pl-2">
-                login
+            <div className="flex items-center justify-center w-full pt-4">
+              <p className="text-gray-600">Already have an account?</p>
+              <Link to="/login" className="ml-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors">
+                Sign In
               </Link>
             </div>
           </form>

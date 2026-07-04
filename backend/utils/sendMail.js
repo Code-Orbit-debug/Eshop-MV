@@ -1,38 +1,34 @@
 const nodemailer = require("nodemailer");
+const SibApiV3Sdk = require("@getbrevo/brevo");
 
-const sendViaResend = async ({ email, subject, message }) => {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM || process.env.SMTP_MAIL;
+const sendViaBrevo = async ({ email, subject, message }) => {
+  const apiKey = process.env.BREVO_API_KEY;
+  const senderEmail = process.env.BREVO_SENDER_EMAIL || process.env.SMTP_MAIL;
+  const senderName = process.env.BREVO_SENDER_NAME || "Eshop-MV";
 
-  if (!apiKey || !from) {
-    throw new Error(
-      "RESEND_API_KEY and RESEND_FROM (or SMTP_MAIL) are required for email delivery on Railway"
-    );
+  if (!apiKey) {
+    throw new Error("BREVO_API_KEY is required for email delivery");
   }
 
-  console.log("[sendMail] Sending via Resend HTTPS API to:", email);
+  console.log("[sendMail] Sending via Brevo API to:", email);
 
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from,
-      to: [email],
-      subject,
-      text: message,
-    }),
-  });
+  const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+  apiInstance.setApiKey(SibApiV3Sdk.TransactionalEmailsApi.apiKeys.apiKey, apiKey);
 
-  const data = await response.json();
+  const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+  sendSmtpEmail.subject = subject;
+  sendSmtpEmail.htmlContent = message.replace(/\n/g, "<br>");
+  sendSmtpEmail.textContent = message;
+  sendSmtpEmail.sender = {
+    name: senderName,
+    email: senderEmail,
+  };
+  sendSmtpEmail.to = [{ email }];
+  sendSmtpEmail.replyTo = { email: senderEmail };
 
-  if (!response.ok) {
-    throw new Error(data.message || `Resend API error (${response.status})`);
-  }
+  const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
 
-  console.log("[sendMail] Resend delivery success, id:", data.id);
+  console.log("[sendMail] Brevo delivery success, messageId:", data.messageId);
   return data;
 };
 
@@ -70,10 +66,12 @@ const sendViaSmtp = async ({ email, subject, message }) => {
 };
 
 const sendMail = async (options) => {
-  if (process.env.RESEND_API_KEY) {
-    return sendViaResend(options);
+  // Try Brevo first (recommended for production)
+  if (process.env.BREVO_API_KEY) {
+    return sendViaBrevo(options);
   }
 
+  // Fallback to SMTP for local development
   if (
     process.env.SMTP_HOST &&
     process.env.SMTP_MAIL &&
@@ -83,7 +81,7 @@ const sendMail = async (options) => {
   }
 
   throw new Error(
-    "Email is not configured. Set RESEND_API_KEY (recommended for Railway) or SMTP credentials."
+    "Email is not configured. Set BREVO_API_KEY (recommended for production) or SMTP credentials (for local development)."
   );
 };
 

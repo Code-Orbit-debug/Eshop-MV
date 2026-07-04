@@ -140,108 +140,110 @@ const AllCoupons = () => {
             autoHeight
           />
           {open && (
-            <div className="fixed top-0 left-0 w-full h-screen bg-[#00000020] z-[2000] flex items-center justify-center">
-              <div className="w-[90%] 800px:w-[40%] h-[80vh]  p-4 rounded-md bg-white shadow-sm relative">
-                <div className="w-full flex justify-end">
+            <div className="fixed top-0 left-0 w-full h-screen bg-[#00000020] z-[2000] flex items-center justify-center p-4">
+              <div className="w-full max-w-[500px] max-h-[90vh] p-6 rounded-lg bg-white shadow-lg relative flex flex-col">
+                <div className="w-full flex justify-between items-center mb-4">
+                  <h5 className="text-[24px] font-Poppins font-semibold text-gray-800">
+                    Create Coupon Code
+                  </h5>
                   <RxCross1
-                    size={30}
+                    size={24}
                     onClick={() => setOpen(false)}
-                    className="cursor-pointer"
+                    className="cursor-pointer text-gray-500 hover:text-gray-700"
                   />
                 </div>
-                <h5 className="text-[30px] font-Poppins text-center">
-                  Create Coupons Code
-                </h5>
                 {/* Create Coupon Code Form */}
-                <form onSubmit={handleSubmit} areia-required="true">
-                  <br />
-                  <div>
-                    <label className="pb-2">
-                      Name <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      required
-                      value={name}
-                      className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm capitalize"
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="Enter Your Coupon Code Name... "
-                    />
-                  </div>
-                  <br />
-                  <div>
-                    <label className="pb-2">
-                      Discount Percentage:{" "}
-                      <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="number"
-                      name="value"
-                      value={value}
-                      required
-                      className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm capitalize"
-                      onChange={(e) => setValue(e.target.value)}
-                      placeholder="Enter Your Coupon Code Value... "
-                    />
-                  </div>
-                  <br />
-                  <div>
-                    <label className="pb-2">
-                      Minimum Amount: <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="number"
-                      name="minAmmount"
-                      value={minAmount}
-                      className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm capitalize"
-                      onChange={(e) => setMinAmount(e.target.value)}
-                      placeholder="Enter Your Coupon Code Minimum Amount... "
-                    />
-                  </div>
-                  <br />
-                  <div>
-                    <label className="pb-2">
-                      Maximum Amount: <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="number"
-                      name="maxAmount"
-                      value={maxAmount}
-                      className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm capitalize"
-                      onChange={(e) => setMaxAmount(e.target.value)}
-                      placeholder="Enter Your Coupon Code Maximum Amount... "
-                    />
-                  </div>
-                  <br />
-                  <div>
-                    <label className="pb-2">Selected Products</label>
-                    <select
-                      className="w-full mt-2 border h-[35px] rounded-[5px] capitalize
-                      "
-                      value={selectedProducts}
-                      onChange={(e) => setSelectedProducts(e.target.value)}
-                    >
-                      <option value="Choose a category">
-                        Choose a selected product
-                      </option>
-                      {products &&
-                        products.map((i) => (
-                          <option value={i.name} key={i.name}>
-                            {i.name}
-                          </option>
-                        ))}
-                    </select>
-                  </div>
-                  <br />
-                  <div>
-                    <input
-                      type="submit"
-                      value="Create"
-                      className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] bg-blue-500 text-white cursor-pointer hover:bg-blue-600 transition"
-                    />
+                <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto pr-2">
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Name <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        required
+                        value={name}
+                        className="w-full px-3 h-[40px] border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Enter coupon code name"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Discount Percentage <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="number"
+                        name="value"
+                        value={value}
+                        required
+                        min="0"
+                        max="100"
+                        className="w-full px-3 h-[40px] border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                        onChange={(e) => setValue(e.target.value)}
+                        placeholder="Enter discount percentage"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Minimum Amount <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="number"
+                        name="minAmount"
+                        value={minAmount}
+                        min="0"
+                        className="w-full px-3 h-[40px] border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                        onChange={(e) => setMinAmount(e.target.value)}
+                        placeholder="Enter minimum order amount"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Maximum Amount <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="number"
+                        name="maxAmount"
+                        value={maxAmount}
+                        min="0"
+                        className="w-full px-3 h-[40px] border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                        onChange={(e) => setMaxAmount(e.target.value)}
+                        placeholder="Enter maximum discount amount"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Selected Products
+                      </label>
+                      <select
+                        className="w-full px-3 h-[40px] border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition bg-white"
+                        value={selectedProducts}
+                        onChange={(e) => setSelectedProducts(e.target.value)}
+                      >
+                        <option value="">Choose a product (optional)</option>
+                        {products &&
+                          products.map((i) => (
+                            <option value={i.name} key={i.name}>
+                              {i.name}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
                   </div>
                 </form>
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <input
+                    type="submit"
+                    value="Create Coupon"
+                    className="w-full h-[45px] bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  />
+                </div>
               </div>
             </div>
           )}

@@ -382,4 +382,77 @@ router.delete(
   })
 );
 
+// Update user role to Admin (for initial admin setup)
+router.put(
+  "/update-user-role/:id",
+  isAthuenticated,
+  isAdmin("Admin"),
+  catchAsyncError(async (req, res, next) => {
+    try {
+      const { role } = req.body;
+      const user = await User.findById(req.params.id);
+      if (!user) {
+        return next(new ErrorHandler("User not found", 404));
+      }
+      user.role = role;
+      await user.save();
+      res.status(200).json({
+        success: true,
+        message: `User role updated to ${role}`,
+        user,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+// Create admin user (requires ADMIN_SETUP_SECRET for security)
+router.post(
+  "/create-admin",
+  catchAsyncError(async (req, res, next) => {
+    try {
+      const { name, email, password, avatar, adminSecret } = req.body;
+
+      // Verify admin secret
+      if (adminSecret !== process.env.ADMIN_SETUP_SECRET) {
+        return next(new ErrorHandler("Invalid admin setup secret", 403));
+      }
+
+      if (!name || !email || !password || !avatar) {
+        return next(new ErrorHandler("All fields are required", 400));
+      }
+
+      const userEmail = await User.findOne({ email });
+      if (userEmail) {
+        return next(new ErrorHandler("User already exists", 400));
+      }
+
+      let myCloud;
+      try {
+        myCloud = await cloudinary.uploader.upload(avatar, {
+          folder: "avatars",
+        });
+      } catch (err) {
+        return next(new ErrorHandler("Image upload failed", 500));
+      }
+
+      const user = await User.create({
+        name,
+        email,
+        password,
+        avatar: {
+          public_id: myCloud.public_id,
+          url: myCloud.secure_url,
+        },
+        role: "Admin",
+      });
+
+      sendToken(user, 201, res);
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
 module.exports = router;

@@ -46,7 +46,7 @@ app.get("/health", (req, res) => {
     status: "OK",
     uptime: process.uptime(),
     timestamp: Date.now(),
-    emailProvider: process.env.RESEND_API_KEY ? "resend" : "smtp",
+    emailProvider: process.env.BREVO_API_KEY ? "brevo" : (process.env.RESEND_API_KEY ? "resend" : "smtp"),
     frontendUrl: process.env.FRONTEND_URL || null,
   });
 });
