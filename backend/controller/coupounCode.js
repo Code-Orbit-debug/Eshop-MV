@@ -31,12 +31,18 @@ router.get(
   "/get-coupon/:id",
   isSeller,
   catchAsyncError(async (req, res, next) => {
-    //this is returning an array of coupoun codes
-    const couponCode = await CouponCode.find({ shopId: req.body.id });
-    res.status(201).json({
-      success: true,
-      couponCode,
-    });
+    try {
+      const couponCode = await CouponCode.find({
+        shopId: req.params.id,
+      });
+
+      res.status(200).json({
+        success: true,
+        couponCode,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 400));
+    }
   })
 );
 router.delete(
