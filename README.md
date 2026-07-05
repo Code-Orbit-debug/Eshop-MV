@@ -464,7 +464,7 @@ The app should now be running locally:
 | Service | Platform | Notes |
 |---|---|---|
 | Frontend | [Vercel](https://eshop-mv.vercel.app/) | Set `REACT_APP_BACKEND_URL` to your deployed backend URL |
-| Backend API | [Railway](https://eshop-mv-production.up.railway.app/) | Set root directory to `backend`, add all `.env` variables |
+| Backend API | [Railway](https://eshop-mv-backend.vercel.app/) | Set root directory to `backend`, add all `.env` variables |
 | Socket Server | [Railway](https://eshop-mv-socket.up.railway.app) | Set root directory to `socket` |
 | Database | [MongoDB Atlas](https://www.mongodb.com/atlas) | Whitelist Render's IP or allow access from anywhere |
 

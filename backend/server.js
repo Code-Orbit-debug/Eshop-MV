@@ -1,7 +1,9 @@
 const path = require("path");
 
 // Load env before any module reads process.env
-require("dotenv").config({ path: path.join(__dirname, "config/.env") });
+require("dotenv").config({
+  path: path.join(__dirname, "config/.env"),
+});
 
 const app = require("./app");
 const dbConnection = require("./db/Database");
@@ -12,27 +14,23 @@ process.on("uncaughtException", (error) => {
   console.log("Shutting Down Server (uncaughtException)");
 });
 
+// Keep database connection
 dbConnection();
 
+// Keep Cloudinary config
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const PORT = process.env.PORT || 8000;
-
-const server = app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server running on port ${PORT} (${process.env.NODE_ENV || "development"})`);
-  console.log(`Frontend URL: ${process.env.FRONTEND_URL || "not set"}`);
-  console.log(
-    `Email provider: ${process.env.RESEND_API_KEY ? "Resend (HTTPS)" : "SMTP"}`
-  );
-});
+// Removed app.listen()
+// Removed PORT
+// Removed server.close()
 
 process.on("unhandledRejection", (error) => {
   console.log(`Error: ${error.message}`);
-  server.close(() => {
-    process.exit(1);
-  });
 });
+
+// Export app for Vercel
+module.exports = app;
